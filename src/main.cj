@@ -7,33 +7,41 @@ from std import io.*
 import  myMacro.*
 
 main(): Unit {
-    var parser = JsonParser()
+    var myClass = MyClass()
+    var jsonValues = JsonParser().parse("{\"v1\": \"String1\",\"v2\": \"String2\", \"v3\": \"10\"}").asObject().getOrThrow()
+    myClass.v1 = jsonValues.get("v1").asString().getOrThrow().getValue()
+    myClass.v2 = jsonValues.get("v2").asString().getOrThrow().getValue() 
+    
+}
 
-    var v = parser.parse("{\"f1\": \"String\"}")
-    var map = HashMap<String, JsonValue>()
-    map.put("a",  v)
-    map.put("b",  JsonString("1"))
+interface MyInterface {
+    func rotate(): Unit
+}
 
-    var jObjct = JsonObject(map)
-    println(jObjct.toJsonString())
+open class BaseClass {
+    public func sayHello() {
+        println("hello")
+    }
 }
 
 @classMarco
-class MyClass {
+class MyClass <: BaseClass & MyInterface {
     public var v1: String = "Value1"
-
-   
-    private var v2: String = "Value2"
-    public var v3: Int64 = 10
+    public var v2: String = "Value2"
+    //public var v3: Int64 = 10
 
     public init() {
         this.v2 = "V2+"
     }
 
-    @funcMarco
     public func rotate() {
-        var v = this.v2
+        var v: String = this.v2
         this.v2 = this.v1
         this.v1 = v
+    }
+
+    @funcMarco
+    public func myFunc() {
+        println("myFunc")
     }
 }
