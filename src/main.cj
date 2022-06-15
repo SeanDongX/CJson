@@ -8,18 +8,29 @@ import  myMacro.*
 
 main(): Unit {
     testFromJson()
+    testToJson()
 }
 
-func testFromJson() {
+func testFromJson(): Unit {
     var myClass = MyClass()
     var jsonValues = JsonParser().parse("{\"v1\": \"String1\",\"v2\": \"String2\", \"v3\": \"10\"}").asObject().getOrThrow()
     myClass.v1 = jsonValues.get("v1").asString().getOrThrow().getValue()
     myClass.v2 = jsonValues.get("v2").asString().getOrThrow().getValue() 
 
-    var myClass1 =MyClass.fromJson("{\"v1\": \"String1\",\"v2\": \"String2\", \"v3\": \"10\"}")
-    
-    println(myClass.v1 == myClass1.v1)
-    println(myClass.v2 == myClass1.v2)
+    var myClass1 = MyClass.fromJson("{\"v1\": \"String1\",\"v2\": \"String2\", \"v3\": \"10\"}")
+    println(myClass.v1 == myClass1.v1 && myClass.v2 == myClass1.v2)
+}
+
+func testToJson(): Unit {
+    var myClass = MyClass()
+    myClass.v1 = "String1"
+    myClass.v2 = "String2"
+
+    var map: HashMap<String, JsonValue> = HashMap()
+    map.put("v1", JsonString(myClass.v1))
+    map.put("v2", JsonString(myClass.v2))
+ 
+    println(JsonObject(map).toString() == myClass.toJson())
 }
 
 interface MyInterface {
@@ -48,7 +59,7 @@ class MyClass <: BaseClass & MyInterface {
         this.v1 = v
     }
 
-    @funcMarco
+    //@funcMarco
     public func myFunc() {
         println("myFunc")
     }

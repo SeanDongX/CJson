@@ -20,8 +20,9 @@ public macro classMarco(input: Tokens): Tokens {
     let classIdent = decl.getIdentifier()
     let classBody = decl.getBody()
     let superTypes = decl.getSuperTypes()
-    let fromJsonFunc = makeFromJsonFunc(classIdent, checkVars(decl))
-    let toJsonFunc = makeToJsonFunc(classIdent)
+    let varDeclList = checkVars(decl)
+    let fromJsonFunc = makeFromJsonFunc(classIdent, varDeclList)
+    let toJsonFunc = makeToJsonFunc(varDeclList)
 
      return quote(
         $classModifier $classKeyWord $classIdent <: $superTypes {
@@ -74,10 +75,35 @@ func makeFromJsonFunc(classIdent: Token, filedInfoList: ArrayList<NodeFormat_Var
     )
 }
 
-func makeToJsonFunc(classIdent: Token): Tokens {
+func makeToJsonFunc(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+    var fileMapToken = Tokens()
+    
+    for(fieldInfo in filedInfoList) {
+        //TODO: get type from getType() or init Func()
+            
+        var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
+        var identifier = fieldInfo.getIdentifier()
+        var key = identifier.value
+  
+        match(typeInfo) {
+            case "String" => fileMapToken = fileMapToken + quote(
+                map.put($key, JsonString(this.$identifier))
+            )
+            case "Int64" => fileMapToken = fileMapToken + quote(
+                map.put($key, JsonInt(this.$identifier))
+            )
+            case _ => fileMapToken = fileMapToken
+        }        
+    }
+
     return quote(
         public func toJson(): String {
-            return ""
+            var map: HashMap<String, JsonValue> = HashMap()
+
+            $fileMapToken
+
+            return JsonObject(map).toString()
+
         }
     )
 }
