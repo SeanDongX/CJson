@@ -40,8 +40,6 @@ func checkVars(classDecl: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {
 }
 
 func makeFromJsonFunc(classIdent: Token, filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
-    var jsonValues = JsonParser().parse("{\"v1\": \"String1\",\"v2\": \"String2\"}").asObject().getOrThrow()
-    
     var fieldFetchToken = quote(
         var ret = $classIdent()
     )
