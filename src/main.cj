@@ -7,11 +7,19 @@ from std import io.*
 import  myMacro.*
 
 main(): Unit {
+    testFromJson()
+}
+
+func testFromJson() {
     var myClass = MyClass()
     var jsonValues = JsonParser().parse("{\"v1\": \"String1\",\"v2\": \"String2\", \"v3\": \"10\"}").asObject().getOrThrow()
     myClass.v1 = jsonValues.get("v1").asString().getOrThrow().getValue()
     myClass.v2 = jsonValues.get("v2").asString().getOrThrow().getValue() 
+
+    var myClass1 =MyClass.fromJson("{\"v1\": \"String1\",\"v2\": \"String2\", \"v3\": \"10\"}")
     
+    println(myClass.v1 == myClass1.v1)
+    println(myClass.v2 == myClass1.v2)
 }
 
 interface MyInterface {

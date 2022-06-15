@@ -64,7 +64,7 @@ func makeFromJsonFunc(classIdent: Token, filedInfoList: ArrayList<NodeFormat_Var
     }
     
     return quote(
-        public func fromJson(json: String): $classIdent {
+        public static func fromJson(json: String): $classIdent {
             var jsonObject = JsonParser().parse(json).asObject().getOrThrow()
             
             $fieldFetchToken
@@ -96,8 +96,8 @@ class ClassMemeberDeclVisitor <: Visitor {
         }
 
         if (decl.isVarDecl()) {
-            println(decl.asVarDecl().getIdentifier().value)
-            println(decl.asVarDecl().getType().getOrThrow().asRefType().getIdentifier().value)
+            //println(decl.asVarDecl().getIdentifier().value)
+            //println(decl.asVarDecl().getType().getOrThrow().asRefType().getIdentifier().value)
             fileInfoList.add(decl.asVarDecl())
         }
         
