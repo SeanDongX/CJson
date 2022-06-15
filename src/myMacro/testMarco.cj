@@ -98,7 +98,6 @@ func composeMap(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
     var fileMapToken = Tokens()
     
     for(fieldInfo in filedInfoList) {
-        //TODO: get type from getType() or init Func()
         fileMapToken = fileMapToken + addFieldToMap(fieldInfo)   
     }
 
@@ -122,10 +121,18 @@ func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
 }
 
 func getFieldInfo(fieldInfo: NodeFormat_VarDecl): (Token, String, String) {
-    var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
-    var identifier = fieldInfo.getIdentifier()
-    var name = identifier.value
+    let identifier = fieldInfo.getIdentifier()
+    let name = identifier.value
+    var typeInfo: String
+    
+    try {
+        typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
+    } catch (exp: NoneValueException) {
+        //TODO: make new exception type
+        throw Exception("Field ${name} must be declared with a specific type instead of using a inferred type")
+    }
 
+    
     return (identifier, name, typeInfo)
 }
 
@@ -149,15 +156,5 @@ class ClassMemeberDeclVisitor <: Visitor {
         }
         
         return true
-    }
-}
-
-record ClassFieldInfo {
-    let identifier: Token
-    let typeValue: NodeFormat_Type
-
-    public init(identifier: Token, typeValue: NodeFormat_Type) {
-        this.identifier = identifier
-        this.typeValue = typeValue
     }
 }
