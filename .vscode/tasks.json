@@ -15,6 +15,12 @@
             "problemMatcher": []
         },
         {
+            "label": "build & run",
+            "type": "shell",
+            "command": "cjc ./src/myMacro/testMarco.cj --output-type=dylib -o m.so && cpm build && ./bin/main",
+            "problemMatcher": []
+        },
+        {
             "label": "debug marco",
             "type": "shell",
             "command": "cjc ./src/myMacro/testMarco.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./src/main.cj",
