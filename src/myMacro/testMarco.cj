@@ -40,37 +40,46 @@ func checkVars(classDecl: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {
 }
 
 func makeFromJsonFunc(classIdent: Token, filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
-    var fieldFetchToken = quote(
-        var ret = $classIdent()
-    )
-    
-    for(fieldInfo in filedInfoList) {
-        //TODO: get type from getType() or init Func()
-            
-        var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
-        var identifier = fieldInfo.getIdentifier()
-        var key = identifier.value
-  
-        match(typeInfo) {
-            case "String" => fieldFetchToken = fieldFetchToken + quote(
-                ret.$identifier = jsonObject.get($key).asString().getOrThrow().getValue()
-            )
-            case "Int64" => fieldFetchToken = fieldFetchToken + quote(
-                ret.$identifier = jsonObject.get($key).asInt().getOrThrow().getValue()
-            )
-            case _ => ()
-        }        
-    }
-    
     return quote(
         public static func fromJson(json: String): $classIdent {
             var jsonObject = JsonParser().parse(json).asObject().getOrThrow()
             
-            $fieldFetchToken
+            var ret = $classIdent()
+
+            $(parseJsonFields(filedInfoList))
             
             return ret
         }
     )
+}
+
+func parseJsonFields(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+    var fieldParseToken = Tokens()
+    
+    for(fieldInfo in filedInfoList) {
+        fieldParseToken = fieldParseToken +  parseJsonFiled(fieldInfo)              
+    }
+
+    return fieldParseToken
+}
+
+func parseJsonFiled(fieldInfo: NodeFormat_VarDecl): Tokens {
+    //TODO: get type from getType() or init Func()
+    var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
+    var identifier = fieldInfo.getIdentifier()
+    var key = identifier.value
+
+    var tokens: Tokens = match(typeInfo) {
+        case "String" =>  quote(
+            ret.$identifier = jsonObject.get($key).asString().getOrThrow().getValue()
+        )
+        case "Int64" => quote(
+            ret.$identifier = jsonObject.get($key).asInt().getOrThrow().getValue()
+        )
+        case _ => Tokens()
+    }  
+
+    return tokens
 }
 
 func makeToJsonFunc(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
