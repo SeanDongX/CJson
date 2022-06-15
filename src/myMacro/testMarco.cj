@@ -76,36 +76,46 @@ func makeFromJsonFunc(classIdent: Token, filedInfoList: ArrayList<NodeFormat_Var
 }
 
 func makeToJsonFunc(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
-    var fileMapToken = Tokens()
-    
-    for(fieldInfo in filedInfoList) {
-        //TODO: get type from getType() or init Func()
-            
-        var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
-        var identifier = fieldInfo.getIdentifier()
-        var key = identifier.value
-  
-        match(typeInfo) {
-            case "String" => fileMapToken = fileMapToken + quote(
-                map.put($key, JsonString(this.$identifier))
-            )
-            case "Int64" => fileMapToken = fileMapToken + quote(
-                map.put($key, JsonInt(this.$identifier))
-            )
-            case _ => fileMapToken = fileMapToken
-        }        
-    }
-
+    //var compsedMap = composeMap(filedInfoList)
     return quote(
         public func toJson(): String {
             var map: HashMap<String, JsonValue> = HashMap()
 
-            $fileMapToken
+            $(composeMap(filedInfoList))
 
             return JsonObject(map).toString()
 
         }
     )
+}
+
+func composeMap(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+    var fileMapToken = Tokens()
+    
+    for(fieldInfo in filedInfoList) {
+        //TODO: get type from getType() or init Func()
+        fileMapToken = fileMapToken + addFieldToMap(fieldInfo)   
+    }
+
+    return fileMapToken
+}
+
+func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
+    var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
+    var identifier = fieldInfo.getIdentifier()
+    var key = identifier.value
+
+    var token: Tokens = match(typeInfo) {
+        case "String" => quote(
+            map.put($key, JsonString(this.$identifier))
+        )
+        case "Int64" => quote(
+            map.put($key, JsonInt(this.$identifier))
+        )
+        case _ => Tokens()
+    }
+
+    return token
 }
 
 class ClassMemeberDeclVisitor <: Visitor {
