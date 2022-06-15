@@ -65,16 +65,14 @@ func parseJsonFields(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
 
 func parseJsonFiled(fieldInfo: NodeFormat_VarDecl): Tokens {
     //TODO: get type from getType() or init Func()
-    var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
-    var identifier = fieldInfo.getIdentifier()
-    var key = identifier.value
+    let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)
 
-    var tokens: Tokens = match(typeInfo) {
+    let tokens: Tokens = match(typeInfo) {
         case "String" =>  quote(
-            ret.$identifier = jsonObject.get($key).asString().getOrThrow().getValue()
+            ret.$identifier = jsonObject.get($name).asString().getOrThrow().getValue()
         )
         case "Int64" => quote(
-            ret.$identifier = jsonObject.get($key).asInt().getOrThrow().getValue()
+            ret.$identifier = jsonObject.get($name).asInt().getOrThrow().getValue()
         )
         case _ => Tokens()
     }  
@@ -108,21 +106,27 @@ func composeMap(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
 }
 
 func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
-    var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
-    var identifier = fieldInfo.getIdentifier()
-    var key = identifier.value
+    let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)
 
-    var token: Tokens = match(typeInfo) {
+    let tokens: Tokens = match(typeInfo) {
         case "String" => quote(
-            map.put($key, JsonString(this.$identifier))
+            map.put($name, JsonString(this.$identifier))
         )
         case "Int64" => quote(
-            map.put($key, JsonInt(this.$identifier))
+            map.put($name, JsonInt(this.$identifier))
         )
         case _ => Tokens()
     }
 
-    return token
+    return tokens
+}
+
+func getFieldInfo(fieldInfo: NodeFormat_VarDecl): (Token, String, String) {
+    var typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
+    var identifier = fieldInfo.getIdentifier()
+    var name = identifier.value
+
+    return (identifier, name, typeInfo)
 }
 
 class ClassMemeberDeclVisitor <: Visitor {
