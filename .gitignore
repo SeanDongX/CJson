@@ -1,0 +1,9 @@
+*.cjo
+*.bc
+*.o
+*.so
+*.a
+out/
+build/
+bin/
+debug_*.cj
