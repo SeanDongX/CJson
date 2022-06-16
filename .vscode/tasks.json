@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "cjc ./src/serialization/JsonSerializable.cj --output-type=dylib -o m.so && cpm build"
+            "command": "cpm build"
         },
         {
             "label": "run",
@@ -17,7 +17,7 @@
         {
             "label": "build & run",
             "type": "shell",
-            "command": "cjc ./src/serialization/JsonSerializable.cj --output-type=dylib -o m.so && cpm build && ./bin/main",
+            "command": "cpm build && ./bin/main",
             "problemMatcher": []
         },
         {
