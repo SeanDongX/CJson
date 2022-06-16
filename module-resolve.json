@@ -4,8 +4,8 @@
       "organization": "test",
       "name": "cjson",
       "path": "./",
-      "packagePath": "/mnt/d/wsl2/workspace/cjson/src/myMacro",
-      "packageName": "cjson/myMacro",
+      "packagePath": "/mnt/d/wsl2/workspace/cjson/src/serialization",
+      "packageName": "cjson/serialization",
       "version": "1.0.0",
       "hash": "-2010423268035109051",
       "isMacroPackage": true,
@@ -27,7 +27,7 @@
       "output_type": "executable",
       "command_option": "",
       "requires": [
-        "cjson/myMacro"
+        "cjson/serialization"
       ],
       "package_requires": {},
       "foreign_requires": {}

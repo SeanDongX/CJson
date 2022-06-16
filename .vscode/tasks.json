@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "cjc ./src/myMacro/testMarco.cj --output-type=dylib -o m.so && cpm build"
+            "command": "cjc ./src/serialization/JsonSerializable.cj --output-type=dylib -o m.so && cpm build"
         },
         {
             "label": "run",
@@ -17,13 +17,13 @@
         {
             "label": "build & run",
             "type": "shell",
-            "command": "cjc ./src/myMacro/testMarco.cj --output-type=dylib -o m.so && cpm build && ./bin/main",
+            "command": "cjc ./src/serialization/JsonSerializable.cj --output-type=dylib -o m.so && cpm build && ./bin/main",
             "problemMatcher": []
         },
         {
             "label": "debug marco",
             "type": "shell",
-            "command": "cjc ./src/myMacro/testMarco.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./src/main.cj",
+            "command": "cjc ./src/serialization/JsonSerializable.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./src/main.cj",
             "problemMatcher": []
         },
         {

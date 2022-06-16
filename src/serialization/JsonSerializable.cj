@@ -1,4 +1,4 @@
-macro package myMacro
+macro package serialization
 
 from std import ast.*
 from std import collection.*
@@ -13,7 +13,7 @@ public macro funcMarco(input: Tokens): Tokens {
     )
 }
 
-public macro classMarco(input: Tokens): Tokens {
+public macro JsonSerializable(input: Tokens): Tokens {
     let decl = ParseDecl(input).asClassDecl()
     let classModifier = decl.getModifiers()
     let classKeyWord = decl.getKeyword()
@@ -72,7 +72,11 @@ func parseJsonFiled(fieldInfo: NodeFormat_VarDecl): Tokens {
             ret.$identifier = jsonObject.get($name).asString().getOrThrow().getValue()
         )
         case "Int64" => quote(
-            ret.$identifier = jsonObject.get($name).asInt().getOrThrow().getValue()
+            try {
+                ret.$identifier = jsonObject.get($name).asInt().getOrThrow().getValue()
+            } catch(e: NoneValueException) {
+                throw Exception("Exception caught: " + $name)
+            }
         )
         case _ => Tokens()
     }  
@@ -123,17 +127,22 @@ func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
 func getFieldInfo(fieldInfo: NodeFormat_VarDecl): (Token, String, String) {
     let identifier = fieldInfo.getIdentifier()
     let name = identifier.value
-    var typeInfo: String
+    var typeName: String
     
     try {
-        typeInfo = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
+        typeName = match(fieldInfo.getType()) {
+            case Some(v) where v.isRefType() => v.asRefType().getIdentifier().value
+            case Some(v) where v.isPrimitiveType() => v.asPrimitiveType().getPrimitive().value
+            case Some(v) => "OTHER TYPE"
+            case _ => "NO TYPE"
+        }
+        //typeName = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
     } catch (exp: NoneValueException) {
         //TODO: make new exception type
         throw Exception("Field ${name} must be declared with a specific type instead of using a inferred type")
     }
-
     
-    return (identifier, name, typeInfo)
+    return (identifier, name, typeName)
 }
 
 class ClassMemeberDeclVisitor <: Visitor {
@@ -150,8 +159,6 @@ class ClassMemeberDeclVisitor <: Visitor {
         }
 
         if (decl.isVarDecl()) {
-            //println(decl.asVarDecl().getIdentifier().value)
-            //println(decl.asVarDecl().getType().getOrThrow().asRefType().getIdentifier().value)
             fileInfoList.add(decl.asVarDecl())
         }
         
