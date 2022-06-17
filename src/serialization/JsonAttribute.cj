@@ -7,11 +7,15 @@ public macro JsonAttribute(attr: Tokens, input: Tokens): Tokens {
     if (!ParseDecl(input).isVarDecl()) {
         throw Exception("JsonAttribute is noly allow for class level vars")
     }
-
+    
     return quote(
         $input
         $(makeAtrritubeNameGetter(checkVarNameAttr(attr), ParseDecl(input).asVarDecl()))
     )
+}
+
+func getVarNameMapFuncToken(varDecl: NodeFormat_VarDecl): Token {
+    return Token(IDENTIFIER, "get_" + varDecl.getIdentifier().value + "_name_jsonSerializer")
 }
 
 func checkVarNameAttr(attr: Tokens): String {
@@ -25,7 +29,7 @@ func checkVarNameAttr(attr: Tokens): String {
 }
 
 func makeAtrritubeNameGetter(userDefinedName: String, varDecl: NodeFormat_VarDecl): Tokens {
-    var fucnNameIdent = Token(IDENTIFIER, "get_" + varDecl.getIdentifier().value + "_name_jsonSerializer")
+    var fucnNameIdent = getVarCustomNameGetterFuncToken(varDecl)
     return quote(
         private func $(fucnNameIdent)(): String {
             return $userDefinedName
