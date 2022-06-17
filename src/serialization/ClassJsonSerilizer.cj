@@ -36,8 +36,14 @@ class ClassJsonSerilizer <: ClassProcessor {
             case "String" => quote(
                 map.put($mappedNameValue, JsonString(this.$identifier))
             )
+            case "Bool" => quote(
+                map.put($mappedNameValue, JsonBool(this.$identifier))
+            )
             case "Int64" => quote(
                 map.put($mappedNameValue, JsonInt(this.$identifier))
+            )
+            case "Float64" => quote(
+                map.put($mappedNameValue, JsonFloat(this.$identifier))
             )
             case _ => Tokens()
         }

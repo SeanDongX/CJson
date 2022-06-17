@@ -31,20 +31,28 @@ class ClassJsonDeserilizer <: ClassProcessor {
         let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)
         var mappedNameValue = getMappedName(name)
 
-        let tokens: Tokens = match(typeInfo) {
-            case "String" =>  quote(
-                ret.$identifier = jsonObject.get($mappedNameValue).asString().getOrThrow().getValue()
-            )
-            case "Int64" => quote(
-                try {
-                    ret.$identifier = jsonObject.get($mappedNameValue).asInt().getOrThrow().getValue()
-                } catch(e: NoneValueException) {
-                    throw Exception("Exception caught: " + $name)
-                }
-            )
-            case _ => Tokens()
-        }  
+        try {
 
-        return tokens
+            let tokens: Tokens = match(typeInfo) {
+                case "String" =>  quote(
+                    ret.$identifier = jsonObject.get($mappedNameValue).asString().getOrThrow().getValue()
+                )
+                case "Bool" =>  quote(
+                    ret.$identifier = jsonObject.get($mappedNameValue).asBool().getOrThrow().getValue()
+                )
+                case "Int64" => quote(
+                    ret.$identifier = jsonObject.get($mappedNameValue).asInt().getOrThrow().getValue()                
+                )
+                case "Float64" => quote(
+                    ret.$identifier = jsonObject.get($mappedNameValue).asFloat().getOrThrow().getValue()                
+                )
+                case _ => Tokens()
+            }
+
+            return tokens
+
+        } catch(e: NoneValueException) {
+            throw Exception("Exception caught: " + name)
+        }
     }
 }

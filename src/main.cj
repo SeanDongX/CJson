@@ -6,10 +6,10 @@ from std import io.*
 
 import  serialization.*
 
-let myClassJsonString = "{\"v1\": \"String1\",\"v2_alias\": \"String2\", \"v3\": 10}"
-let myClassJsonStringWithIgnored = "{\"v1\": \"String1\",\"v2_alias\": \"String2\", \"v3\": 10, \"ignored\": \"IgnoredValue\"}"
+let myClassJsonString = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
+let myClassJsonStringWithIgnored = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09, \"ignored\": \"IgnoredValue\"}"
 
-let myNewClassJsonString = "{\"v1\": \"S1\",\"v2_alias2\": \"S2\", \"v4\": 10}"
+let myNewClassJsonString = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
 
 main(): Unit {
     testFromJson()
@@ -22,33 +22,43 @@ main(): Unit {
 func testFromJson(): Unit {
     var myClass = MyClass()
     var jsonValues = JsonParser().parse(myClassJsonString).asObject().getOrThrow()
-    myClass.v1 = jsonValues.get("v1").asString().getOrThrow().getValue()
-    myClass.v2 = jsonValues.get("v2_alias").asString().getOrThrow().getValue() 
-    myClass.v3 = jsonValues.get("v3").asInt().getOrThrow().getValue()
+    myClass.stringVar1 = jsonValues.get("stringVar1").asString().getOrThrow().getValue()
+    myClass.stringVar2 = jsonValues.get("stringVar2_alias").asString().getOrThrow().getValue() 
+    myClass.intVar = jsonValues.get("intVar").asInt().getOrThrow().getValue()
+    myClass.boolVar = jsonValues.get("boolVar").asBool().getOrThrow().getValue()
+    myClass.floatVar = jsonValues.get("floatVar").asFloat().getOrThrow().getValue()
 
     var myClass1 = MyClass.fromJson(myClassJsonString)
-    println(myClass.v1 == myClass1.v1 && myClass.v2 == myClass1.v2 && myClass.v3 == myClass1.v3)
+    println(myClass.stringVar1 == myClass1.stringVar1 
+    && myClass.stringVar2 == myClass1.stringVar2 
+    && myClass.intVar == myClass1.intVar
+    && myClass.boolVar == myClass1.boolVar
+    && myClass.floatVar == myClass1.floatVar)
 }
 
 func testToJson(): Unit {
     var myClass = MyClass()
-    myClass.v1 = "String1"
-    myClass.v2 = "String2"
-    myClass.v3 = 10
+    myClass.stringVar1 = "String1"
+    myClass.stringVar2 = "String2"
+    myClass.intVar = 10
+    myClass.boolVar = true
+    myClass.floatVar = 38.09
 
     var map: HashMap<String, JsonValue> = HashMap()
-    map.put("v1", JsonString(myClass.v1))
-    map.put("v2_alias", JsonString(myClass.v2))
-    map.put("v3", JsonInt(myClass.v3))
+    map.put("stringVar1", JsonString(myClass.stringVar1))
+    map.put("stringVar2_alias", JsonString(myClass.stringVar2))
+    map.put("intVar", JsonInt(myClass.intVar))
+    map.put("boolVar", JsonBool(myClass.boolVar))
+    map.put("floatVar", JsonFloat(myClass.floatVar))
 
     println(JsonObject(map).toString() == myClass.toJson())
 }
 
 func testIgnore(): Unit {
     var myClass = MyClass()
-    myClass.v1 = "String1"
-    myClass.v2 = "String2"
-    myClass.v3 = 10
+    myClass.stringVar1 = "String1"
+    myClass.stringVar2 = "String2"
+    myClass.intVar = 10
     myClass.ignored = "SomeValue"
     
     println(!myClass.toJson().contains("ignored"))
@@ -60,21 +70,21 @@ func testIgnore(): Unit {
 func testFromJsonForTwo(): Unit {
     var myClass = MyClass()
     var jsonValues = JsonParser().parse(myClassJsonString).asObject().getOrThrow()
-    myClass.v1 = jsonValues.get("v1").asString().getOrThrow().getValue()
-    myClass.v2 = jsonValues.get("v2_alias").asString().getOrThrow().getValue() 
-    myClass.v3 = jsonValues.get("v3").asInt().getOrThrow().getValue()
+    myClass.stringVar1 = jsonValues.get("stringVar1").asString().getOrThrow().getValue()
+    myClass.stringVar2 = jsonValues.get("stringVar2_alias").asString().getOrThrow().getValue() 
+    myClass.intVar = jsonValues.get("intVar").asInt().getOrThrow().getValue()
 
     var myClass1 = MyClass.fromJson(myClassJsonString)
-    println(myClass.v1 == myClass1.v1 && myClass.v2 == myClass1.v2 && myClass.v3 == myClass1.v3)
+    println(myClass.stringVar1 == myClass1.stringVar1 && myClass.stringVar2 == myClass1.stringVar2 && myClass.intVar == myClass1.intVar)
 
     var myNewClass = MyNewClass()
     var jsonValues2 = JsonParser().parse(myNewClassJsonString).asObject().getOrThrow()
-    myNewClass.v1 = jsonValues2.get("v1").asString().getOrThrow().getValue()
-    myNewClass.v2 = jsonValues2.get("v2_alias2").asString().getOrThrow().getValue() 
+    myNewClass.stringVar1 = jsonValues2.get("stringVar1").asString().getOrThrow().getValue()
+    myNewClass.stringVar2 = jsonValues2.get("stringVar2_alias2").asString().getOrThrow().getValue() 
     myNewClass.v4 = jsonValues2.get("v4").asInt().getOrThrow().getValue()
 
-    var myNewClass2 = MyNewClass.fromJson("{\"v1\": \"S1\",\"v2_alias2\": \"S2\", \"v4\": 10}")
-    println(myNewClass.v1 == myNewClass2.v1 && myNewClass.v2 == myNewClass2.v2 && myNewClass.v4 == myNewClass2.v4)
+    var myNewClass2 = MyNewClass.fromJson("{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}")
+    println(myNewClass.stringVar1 == myNewClass2.stringVar1 && myNewClass.stringVar2 == myNewClass2.stringVar2 && myNewClass.v4 == myNewClass2.v4)
 }
 
 interface MyInterface {
@@ -89,33 +99,35 @@ open class BaseClass {
 
 @JsonSerializable
 class MyClass <: BaseClass & MyInterface {   
-    public var v1: String = "Value1"
+    public var stringVar1: String = "Value1"
     
-    @JsonName["v2_alias"]
-    public var v2: String = "Value2"
+    @JsonName["stringVar2_alias"]
+    public var stringVar2: String = "Value2"
     
-    public var v3: Int64 = 10
+    public var intVar: Int64 = 10
+    public var boolVar: Bool = false
+    public var floatVar: Float64 = 99.01
 
     @JsonIgnore
     public var ignored: String = "OriginalValue"
 
     public init() {
-        this.v2 = "V2+"
+        this.stringVar2 = "stringVar2+"
     }
 
     public func rotate() {
-        var v: String = this.v2
-        this.v2 = this.v1
-        this.v1 = v
+        var v: String = this.stringVar2
+        this.stringVar2 = this.stringVar1
+        this.stringVar1 = v
     }
 }
 
 @JsonSerializable
 class MyNewClass <: BaseClass & MyInterface {   
-    public var v1: String = "S1C"
+    public var stringVar1: String = "S1C"
     
-    @JsonName["v2_alias2"]
-    public var v2: String = "S2C"
+    @JsonName["stringVar2_alias2"]
+    public var stringVar2: String = "S2C"
     
     public var v4: Int64 = 10
 
@@ -124,8 +136,8 @@ class MyNewClass <: BaseClass & MyInterface {
     }
 
     public func rotate() {
-        var v: String = this.v2
-        this.v2 = this.v1
-        this.v1 = v
+        var v: String = this.stringVar2
+        this.stringVar2 = this.stringVar1
+        this.stringVar1 = v
     }
 }
