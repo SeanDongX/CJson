@@ -4,11 +4,9 @@ from std import ast.*
 from encoding import json.*
 
 public macro JsonAttribute(attr: Tokens, input: Tokens): Tokens {
-    if (!ParseDecl(input).isVarDecl()) {
-        throw Exception("JsonAttribute is noly allow for class level vars")
-    }
+    var decl = verifyVarDecl(input, "JsonAttribute")
     
-    userDefinedVarMap.put(ParseDecl(input).asVarDecl().getIdentifier().value, checkVarNameAttr(attr))
+    globalConfig.userDefinedVarMap.put(decl.getIdentifier().value, checkVarNameAttr(attr))
     
     return input
 }

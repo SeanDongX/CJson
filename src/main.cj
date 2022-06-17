@@ -6,20 +6,27 @@ from std import io.*
 
 import  serialization.*
 
+let myClassJsonString = "{\"v1\": \"String1\",\"v2_alias\": \"String2\", \"v3\": 10}"
+let myClassJsonStringWithIgnored = "{\"v1\": \"String1\",\"v2_alias\": \"String2\", \"v3\": 10, \"ignored\": \"IgnoredValue\"}"
+
+let myNewClassJsonString = "{\"v1\": \"S1\",\"v2_alias2\": \"S2\", \"v4\": 10}"
+
 main(): Unit {
     testFromJson()
     testToJson()
+    testIgnore()
     testFromJsonForTwo()
+
 }
 
 func testFromJson(): Unit {
     var myClass = MyClass()
-    var jsonValues = JsonParser().parse("{\"v1\": \"String1\",\"v2_alias\": \"String2\", \"v3\": 10}").asObject().getOrThrow()
+    var jsonValues = JsonParser().parse(myClassJsonString).asObject().getOrThrow()
     myClass.v1 = jsonValues.get("v1").asString().getOrThrow().getValue()
     myClass.v2 = jsonValues.get("v2_alias").asString().getOrThrow().getValue() 
     myClass.v3 = jsonValues.get("v3").asInt().getOrThrow().getValue()
 
-    var myClass1 = MyClass.fromJson("{\"v1\": \"String1\",\"v2_alias\": \"String2\", \"v3\": 10}")
+    var myClass1 = MyClass.fromJson(myClassJsonString)
     println(myClass.v1 == myClass1.v1 && myClass.v2 == myClass1.v2 && myClass.v3 == myClass1.v3)
 }
 
@@ -37,18 +44,31 @@ func testToJson(): Unit {
     println(JsonObject(map).toString() == myClass.toJson())
 }
 
+func testIgnore(): Unit {
+    var myClass = MyClass()
+    myClass.v1 = "String1"
+    myClass.v2 = "String2"
+    myClass.v3 = 10
+    myClass.ignored = "SomeValue"
+    
+    println(!myClass.toJson().contains("ignored"))
+    println(MyClass.fromJson(myClassJsonString).ignored == "OriginalValue")
+    println(MyClass.fromJson(myClassJsonStringWithIgnored).ignored == "OriginalValue")
+
+}
+
 func testFromJsonForTwo(): Unit {
     var myClass = MyClass()
-    var jsonValues = JsonParser().parse("{\"v1\": \"String1\",\"v2_alias\": \"String2\", \"v3\": 10}").asObject().getOrThrow()
+    var jsonValues = JsonParser().parse(myClassJsonString).asObject().getOrThrow()
     myClass.v1 = jsonValues.get("v1").asString().getOrThrow().getValue()
     myClass.v2 = jsonValues.get("v2_alias").asString().getOrThrow().getValue() 
     myClass.v3 = jsonValues.get("v3").asInt().getOrThrow().getValue()
 
-    var myClass1 = MyClass.fromJson("{\"v1\": \"String1\",\"v2_alias\": \"String2\", \"v3\": 10}")
+    var myClass1 = MyClass.fromJson(myClassJsonString)
     println(myClass.v1 == myClass1.v1 && myClass.v2 == myClass1.v2 && myClass.v3 == myClass1.v3)
 
     var myNewClass = MyNewClass()
-    var jsonValues2 = JsonParser().parse("{\"v1\": \"S1\",\"v2_alias2\": \"S2\", \"v4\": 10}").asObject().getOrThrow()
+    var jsonValues2 = JsonParser().parse(myNewClassJsonString).asObject().getOrThrow()
     myNewClass.v1 = jsonValues2.get("v1").asString().getOrThrow().getValue()
     myNewClass.v2 = jsonValues2.get("v2_alias2").asString().getOrThrow().getValue() 
     myNewClass.v4 = jsonValues2.get("v4").asInt().getOrThrow().getValue()
@@ -75,6 +95,9 @@ class MyClass <: BaseClass & MyInterface {
     public var v2: String = "Value2"
     
     public var v3: Int64 = 10
+
+    @JsonIgnore
+    public var ignored: String = "OriginalValue"
 
     public init() {
         this.v2 = "V2+"

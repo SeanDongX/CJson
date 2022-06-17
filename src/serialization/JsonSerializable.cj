@@ -4,14 +4,11 @@ from std import ast.*
 from std import collection.*
 from encoding import json.*
 
-let userDefinedVarMap : HashMap<String, String> = HashMap()
+let globalConfig = GlobalConfig()
 
-public macro JsonSerializable(input: Tokens): Tokens {
-    if (!ParseDecl(input).isClassDecl()) {
-        throw Exception("JsonSerializable macro is only valid for class")
-    }
-
-    let decl = ParseDecl(input).asClassDecl()
+public macro JsonSerializable(input: Tokens): Tokens {    
+    let decl = verifyClassDecl(input, "JsonSerializable")
+    
     let classModifier = decl.getModifiers()
     let classKeyWord = decl.getKeyword()
     let classIdent = decl.getIdentifier()
@@ -21,8 +18,8 @@ public macro JsonSerializable(input: Tokens): Tokens {
     let fromJsonFunc = ClassJsonDeserilizer().makeFromJsonFunc(classIdent, varDeclList)
     let toJsonFunc = ClassJsonSerilizer().makeToJsonFunc(varDeclList)
 
-    //clear map for the next class
-    userDefinedVarMap.clear()
+    //reset global config next class
+    globalConfig.reset()
     
     return quote(
         $classModifier $classKeyWord $classIdent <: $superTypes {

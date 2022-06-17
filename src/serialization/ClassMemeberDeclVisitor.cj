@@ -14,7 +14,11 @@ class ClassMemeberDeclVisitor <: Visitor {
         }
 
         if (decl.isVarDecl()) {
-            fileInfoList.add(decl.asVarDecl())
+            var varDecl = decl.asVarDecl()
+            if (!globalConfig.ignoredVarSet.contains(varDecl.getIdentifier().value)) {
+                fileInfoList.add(varDecl)
+            }
+            
         }
         
         return true

@@ -28,8 +28,8 @@ class ClassJsonSerilizer <: ClassProcessor {
         let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)        
         var mappedNameValue = getMappedName(name)
 
-        if (userDefinedVarMap.contains(name)) {
-            mappedNameValue = userDefinedVarMap.get(name).getOrThrow()
+        if (globalConfig.userDefinedVarMap.contains(name)) {
+            mappedNameValue = globalConfig.userDefinedVarMap.get(name).getOrThrow()
         }
 
         let tokens: Tokens = match(typeInfo) {

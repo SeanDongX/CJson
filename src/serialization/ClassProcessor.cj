@@ -24,8 +24,8 @@ open class ClassProcessor {
 
     protected func getMappedName(name: String): String {
         var mappedNameValue = name
-        if (userDefinedVarMap.contains(name)) {
-            mappedNameValue = userDefinedVarMap.get(name).getOrThrow()
+        if (globalConfig.userDefinedVarMap.contains(name)) {
+            mappedNameValue = globalConfig.userDefinedVarMap.get(name).getOrThrow()
         }
 
         return mappedNameValue
