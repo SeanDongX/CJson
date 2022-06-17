@@ -29,7 +29,7 @@ func checkVarNameAttr(attr: Tokens): String {
 }
 
 func makeAtrritubeNameGetter(userDefinedName: String, varDecl: NodeFormat_VarDecl): Tokens {
-    var fucnNameIdent = getVarCustomNameGetterFuncToken(varDecl)
+    var fucnNameIdent = getVarNameMapFuncToken(varDecl)
     return quote(
         private func $(fucnNameIdent)(): String {
             return $userDefinedName
