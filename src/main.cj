@@ -65,4 +65,9 @@ class MyClass <: BaseClass & MyInterface {
         this.v2 = this.v1
         this.v1 = v
     }
+
+    //@funcMarco
+    public func myFunc() {
+        println("myFunc")
+    }
 }

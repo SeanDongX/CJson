@@ -4,6 +4,15 @@ from std import ast.*
 from std import collection.*
 from encoding import json.*
 
+public macro funcMarco(input: Tokens): Tokens {
+    let decl = ParseDecl(input).asFuncDecl()
+    return quote(
+        public func myfunc() {
+            return println("myFunc replaced")
+        }
+    )
+}
+
 public macro JsonSerializable(input: Tokens): Tokens {
     let decl = ParseDecl(input).asClassDecl()
     let classModifier = decl.getModifiers()
@@ -12,13 +21,11 @@ public macro JsonSerializable(input: Tokens): Tokens {
     let classBody = decl.getBody()
     let superTypes = decl.getSuperTypes()
     let varDeclList = checkVars(decl)
-    let varMakpping = makeVarMapping()
     let fromJsonFunc = ClassJsonDeserilizer().makeFromJsonFunc(classIdent, varDeclList)
     let toJsonFunc = ClassJsonSerilizer().makeToJsonFunc(varDeclList)
 
      return quote(
         $classModifier $classKeyWord $classIdent <: $superTypes {
-            $varMakpping
             $classBody
             $fromJsonFunc
             $toJsonFunc
@@ -32,22 +39,17 @@ func checkVars(classDecl: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {
     return varVisitor.getFiledInfo()
 }
 
-func makeVarMapping(): Tokens {
-    return quote(
-        private static let varMap_jsonSerializer: HashMap<String, String> = HashMap()
-    )
-}
 
 class ClassJsonSerilizer <: ClassProcessor {
     public func makeToJsonFunc(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
         return quote(
             public func toJson(): String {
-                var attributeName = ""
                 var map: HashMap<String, JsonValue> = HashMap()
 
                 $(composeMap(filedInfoList))
 
                 return JsonObject(map).toString()
+
             }
         )
     }
@@ -64,24 +66,18 @@ class ClassJsonSerilizer <: ClassProcessor {
 
     private func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
         let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)
-        let mapTokens = quote(
-            attributeName = $name
-            if (varMap_jsonSerializer.contains($name)) {
-                attributeName = varMap_jsonSerializer.get($name).getOrThrow()
-            }
-        )
 
-        let fetchTokens: Tokens = match(typeInfo) {
+        let tokens: Tokens = match(typeInfo) {
             case "String" => quote(
-                map.put(attributeName, JsonString(this.$identifier))
+                map.put($name, JsonString(this.$identifier))
             )
             case "Int64" => quote(
-                map.put(attributeName, JsonInt(this.$identifier))
+                map.put($name, JsonInt(this.$identifier))
             )
             case _ => Tokens()
         }
 
-        return mapTokens + fetchTokens
+        return tokens
     }
 }
 
@@ -89,8 +85,8 @@ class ClassJsonDeserilizer <: ClassProcessor {
     public func makeFromJsonFunc(classIdent: Token, filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
         return quote(
             public static func fromJson(json: String): $classIdent {
-                var attributeName = ""
                 var jsonObject = JsonParser().parse(json).asObject().getOrThrow()
+                
                 var ret = $classIdent()
 
                 $(parseJsonFields(filedInfoList))
@@ -114,21 +110,13 @@ class ClassJsonDeserilizer <: ClassProcessor {
         //TODO: get type from getType() or init Func()
         let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)
 
-        var mappingTokens = quote (
-            //switch to user defined mapping if any
-            attributeName = $name
-            if (varMap_jsonSerializer.contains($name)) {
-                attributeName = varMap_jsonSerializer.get($name).getOrThrow()
-            }
-        )
-
-        let fetchTokens: Tokens = match(typeInfo) {
+        let tokens: Tokens = match(typeInfo) {
             case "String" =>  quote(
-                ret.$identifier = jsonObject.get(attributeName).asString().getOrThrow().getValue()
+                ret.$identifier = jsonObject.get($name).asString().getOrThrow().getValue()
             )
             case "Int64" => quote(
                 try {
-                    ret.$identifier = jsonObject.get(attributeName).asInt().getOrThrow().getValue()
+                    ret.$identifier = jsonObject.get($name).asInt().getOrThrow().getValue()
                 } catch(e: NoneValueException) {
                     throw Exception("Exception caught: " + $name)
                 }
@@ -136,7 +124,7 @@ class ClassJsonDeserilizer <: ClassProcessor {
             case _ => Tokens()
         }  
 
-        return mappingTokens + fetchTokens
+        return tokens
     }
 }
 
@@ -177,10 +165,6 @@ class ClassMemeberDeclVisitor <: Visitor {
         }
 
         if (decl.isVarDecl()) {
-            if (decl.asVarDecl().getIdentifier().value == "varMap_jsonSerializer") {
-                throw Exception("varMap_jsonSerializer is reserved for JsonSerializer, please use a different name")
-            }
-
             fileInfoList.add(decl.asVarDecl())
         }
         
