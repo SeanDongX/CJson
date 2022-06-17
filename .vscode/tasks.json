@@ -23,7 +23,7 @@
         {
             "label": "debug marco",
             "type": "shell",
-            "command": "cjc ./src/serialization/JsonSerializable.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./src/main.cj",
+            "command": "cjc ./src/serialization/JsonSerializable.cj ./src/serialization/JsonAttribute.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./src/main.cj",
             "problemMatcher": []
         },
         {

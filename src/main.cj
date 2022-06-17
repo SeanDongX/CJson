@@ -47,16 +47,19 @@ open class BaseClass {
 }
 
 @JsonSerializable
-class MyClass <: BaseClass & MyInterface {
+class MyClass <: BaseClass & MyInterface {   
     public var v1: String = "Value1"
+    
+    @JsonAttribute["v2_alias"]
     public var v2: String = "Value2"
+    
     public var v3: Int64 = 10
 
     public init() {
         this.v2 = "V2+"
     }
 
-    
+
     public func rotate() {
         var v: String = this.v2
         this.v2 = this.v1
