@@ -4,16 +4,13 @@ from std import ast.*
 from std import collection.*
 from encoding import json.*
 
-public macro funcMarco(input: Tokens): Tokens {
-    let decl = ParseDecl(input).asFuncDecl()
-    return quote(
-        public func myfunc() {
-            return println("myFunc replaced")
-        }
-    )
-}
+let userDefinedVarMap : HashMap<String, String> = HashMap()
 
 public macro JsonSerializable(input: Tokens): Tokens {
+    if (!ParseDecl(input).isClassDecl()) {
+        throw Exception("JsonSerializable macro is only valid for class")
+    }
+
     let decl = ParseDecl(input).asClassDecl()
     let classModifier = decl.getModifiers()
     let classKeyWord = decl.getKeyword()
@@ -24,7 +21,10 @@ public macro JsonSerializable(input: Tokens): Tokens {
     let fromJsonFunc = ClassJsonDeserilizer().makeFromJsonFunc(classIdent, varDeclList)
     let toJsonFunc = ClassJsonSerilizer().makeToJsonFunc(varDeclList)
 
-     return quote(
+    //clear map for the next class
+    userDefinedVarMap.clear()
+    
+    return quote(
         $classModifier $classKeyWord $classIdent <: $superTypes {
             $classBody
             $fromJsonFunc
@@ -65,14 +65,19 @@ class ClassJsonSerilizer <: ClassProcessor {
     }
 
     private func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
-        let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)
+        let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)        
+        var mappedNameValue = getMappedName(name)
+
+        if (userDefinedVarMap.contains(name)) {
+            mappedNameValue = userDefinedVarMap.get(name).getOrThrow()
+        }
 
         let tokens: Tokens = match(typeInfo) {
             case "String" => quote(
-                map.put($name, JsonString(this.$identifier))
+                map.put($mappedNameValue, JsonString(this.$identifier))
             )
             case "Int64" => quote(
-                map.put($name, JsonInt(this.$identifier))
+                map.put($mappedNameValue, JsonInt(this.$identifier))
             )
             case _ => Tokens()
         }
@@ -109,14 +114,15 @@ class ClassJsonDeserilizer <: ClassProcessor {
     private func parseJsonFiled(fieldInfo: NodeFormat_VarDecl): Tokens {
         //TODO: get type from getType() or init Func()
         let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)
+        var mappedNameValue = getMappedName(name)
 
         let tokens: Tokens = match(typeInfo) {
             case "String" =>  quote(
-                ret.$identifier = jsonObject.get($name).asString().getOrThrow().getValue()
+                ret.$identifier = jsonObject.get($mappedNameValue).asString().getOrThrow().getValue()
             )
             case "Int64" => quote(
                 try {
-                    ret.$identifier = jsonObject.get($name).asInt().getOrThrow().getValue()
+                    ret.$identifier = jsonObject.get($mappedNameValue).asInt().getOrThrow().getValue()
                 } catch(e: NoneValueException) {
                     throw Exception("Exception caught: " + $name)
                 }
@@ -129,7 +135,7 @@ class ClassJsonDeserilizer <: ClassProcessor {
 }
 
 open class ClassProcessor {
-    public func getFieldInfo(fieldInfo: NodeFormat_VarDecl): (Token, String, String) {
+    protected func getFieldInfo(fieldInfo: NodeFormat_VarDecl): (Token, String, String) {
         let identifier = fieldInfo.getIdentifier()
         let name = identifier.value
         var typeName: String
@@ -148,6 +154,15 @@ open class ClassProcessor {
         }
         
         return (identifier, name, typeName)
+    }
+
+    protected func getMappedName(name: String): String {
+        var mappedNameValue = name
+        if (userDefinedVarMap.contains(name)) {
+            mappedNameValue = userDefinedVarMap.get(name).getOrThrow()
+        }
+
+        return mappedNameValue
     }
 }
 
