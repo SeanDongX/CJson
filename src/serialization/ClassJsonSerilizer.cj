@@ -15,13 +15,13 @@ class ClassJsonSerilizer <: ClassProcessor {
     }
 
     private func composeMap(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
-        var fileMapToken = Tokens()
+        var fieldMapToken = Tokens()
         
         for(fieldInfo in filedInfoList) {
-            fileMapToken = fileMapToken + addFieldToMap(fieldInfo)   
+            fieldMapToken = fieldMapToken + addFieldToMap(fieldInfo)   
         }
 
-        return fileMapToken
+        return fieldMapToken
     }
 
     private func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
