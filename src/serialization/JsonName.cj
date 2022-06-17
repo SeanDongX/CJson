@@ -3,7 +3,7 @@ macro package serialization
 from std import ast.*
 from encoding import json.*
 
-public macro JsonAttribute(attr: Tokens, input: Tokens): Tokens {
+public macro JsonName(attr: Tokens, input: Tokens): Tokens {
     var decl = verifyVarDecl(input, "JsonAttribute")
     
     globalConfig.userDefinedVarMap.put(decl.getIdentifier().value, checkVarNameAttr(attr))

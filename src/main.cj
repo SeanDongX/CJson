@@ -91,7 +91,7 @@ open class BaseClass {
 class MyClass <: BaseClass & MyInterface {   
     public var v1: String = "Value1"
     
-    @JsonAttribute["v2_alias"]
+    @JsonName["v2_alias"]
     public var v2: String = "Value2"
     
     public var v3: Int64 = 10
@@ -114,7 +114,7 @@ class MyClass <: BaseClass & MyInterface {
 class MyNewClass <: BaseClass & MyInterface {   
     public var v1: String = "S1C"
     
-    @JsonAttribute["v2_alias2"]
+    @JsonName["v2_alias2"]
     public var v2: String = "S2C"
     
     public var v4: Int64 = 10
