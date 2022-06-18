@@ -25,29 +25,21 @@ class ClassJsonSerilizer <: ClassProcessor {
     }
 
     private func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
-        let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)        
+        let (identifier, name, typeName) = getFieldInfo(fieldInfo)        
         var mappedNameValue = getMappedName(name)
 
         if (globalConfig.userDefinedVarMap.contains(name)) {
             mappedNameValue = globalConfig.userDefinedVarMap.get(name).getOrThrow()
         }
 
-        let tokens: Tokens = match(typeInfo) {
-            case "String" => quote(
-                map.put($mappedNameValue, JsonString(this.$identifier))
+        try {            
+            let valueExpr = globalConfig.adaptorFactry.getAdaptor(typeName).toJsonValue(identifier)
+                    
+            return quote(
+                map.put($mappedNameValue, $valueExpr)
             )
-            case "Bool" => quote(
-                map.put($mappedNameValue, JsonBool(this.$identifier))
-            )
-            case "Int64" => quote(
-                map.put($mappedNameValue, JsonInt(this.$identifier))
-            )
-            case "Float64" => quote(
-                map.put($mappedNameValue, JsonFloat(this.$identifier))
-            )
-            case _ => Tokens()
+        } catch(exp: AdaptorMissingException) {
+            throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }
-
-        return tokens
     }
 }

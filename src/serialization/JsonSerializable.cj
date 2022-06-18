@@ -14,20 +14,25 @@ public macro JsonSerializable(input: Tokens): Tokens {
     let classIdent = decl.getIdentifier()
     let classBody = decl.getBody()
     let superTypes = decl.getSuperTypes()
-    let varDeclList = checkVars(decl)
-    let fromJsonFunc = ClassJsonDeserilizer().makeFromJsonFunc(classIdent, varDeclList)
-    let toJsonFunc = ClassJsonSerilizer().makeToJsonFunc(varDeclList)
 
-    //reset global config next class
-    globalConfig.reset()
-    
-    return quote(
-        $classModifier $classKeyWord $classIdent <: $superTypes {
-            $classBody
-            $fromJsonFunc
-            $toJsonFunc
-        }
-    )
+    try {
+        let varDeclList = checkVars(decl)
+        let fromJsonFunc = ClassJsonDeserilizer().makeFromJsonFunc(classIdent, varDeclList)
+        let toJsonFunc = ClassJsonSerilizer().makeToJsonFunc(varDeclList)
+
+        //reset global config next class
+        globalConfig.reset()
+        
+        return quote(
+            $classModifier $classKeyWord $classIdent <: $superTypes {
+                $classBody
+                $fromJsonFunc
+                $toJsonFunc
+            }
+        )
+    } catch(exp: Exception) {
+        throw MacroExpansionException("Exception when expending JsonSerializable at class ${classIdent.value} : " + exp.getMessage())
+    }
 }
 
 func checkVars(classDecl: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {

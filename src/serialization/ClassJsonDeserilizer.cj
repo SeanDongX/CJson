@@ -1,58 +1,51 @@
 macro package serialization
 
-
 class ClassJsonDeserilizer <: ClassProcessor {
     public func makeFromJsonFunc(classIdent: Token, filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+        
+        var jsonOjbectToken = Token(TokenKind.IDENTIFIER, "jsonObject")
+
         return quote(
             public static func fromJson(json: String): $classIdent {
-                var jsonObject = JsonParser().parse(json).asObject().getOrThrow()
+                var $jsonOjbectToken = JsonParser().parse(json).asObject().getOrThrow()
                 
                 var ret = $classIdent()
 
-                $(parseJsonFields(filedInfoList))
+                $(parseJsonFields(filedInfoList, jsonOjbectToken))
                 
                 return ret
             }
         )
     }
 
-    private func parseJsonFields(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+    private func parseJsonFields(filedInfoList: ArrayList<NodeFormat_VarDecl>, jsonOjbectToken: Token): Tokens {
         var fieldParseToken = Tokens()
         
         for(fieldInfo in filedInfoList) {
-            fieldParseToken = fieldParseToken +  parseJsonFiled(fieldInfo)              
+            fieldParseToken = fieldParseToken +  parseJsonFiled(fieldInfo, jsonOjbectToken)              
         }
 
         return fieldParseToken
     }
 
-    private func parseJsonFiled(fieldInfo: NodeFormat_VarDecl): Tokens {
+    private func parseJsonFiled(fieldInfo: NodeFormat_VarDecl, jsonOjbectToken: Token): Tokens {
         //TODO: get type from getType() or init Func()
-        let (identifier, name, typeInfo) = getFieldInfo(fieldInfo)
+        let (identifier, name, typeName) = getFieldInfo(fieldInfo)
         var mappedNameValue = getMappedName(name)
+        
+        let jsonValueToken = quote(
+                $jsonOjbectToken.get($mappedNameValue)
+        )
 
-        try {
-
-            let tokens: Tokens = match(typeInfo) {
-                case "String" =>  quote(
-                    ret.$identifier = jsonObject.get($mappedNameValue).asString().getOrThrow().getValue()
-                )
-                case "Bool" =>  quote(
-                    ret.$identifier = jsonObject.get($mappedNameValue).asBool().getOrThrow().getValue()
-                )
-                case "Int64" => quote(
-                    ret.$identifier = jsonObject.get($mappedNameValue).asInt().getOrThrow().getValue()                
-                )
-                case "Float64" => quote(
-                    ret.$identifier = jsonObject.get($mappedNameValue).asFloat().getOrThrow().getValue()                
-                )
-                case _ => Tokens()
-            }
-
-            return tokens
-
-        } catch(e: NoneValueException) {
-            throw Exception("Exception caught: " + name)
+        try {            
+            let valueParseExpr = globalConfig.adaptorFactry.getAdaptor(typeName).fromJsonValue(jsonValueToken)
+        
+            return  quote(                    
+                ret.$identifier = $valueParseExpr
+            )
+        } catch(exp: AdaptorMissingException) {
+            throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }
+
     }
 }

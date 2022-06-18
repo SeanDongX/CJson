@@ -5,13 +5,12 @@ open class ClassProcessor {
         let identifier = fieldInfo.getIdentifier()
         let name = identifier.value
         var typeName: String
-        
+
         try {
             typeName = match(fieldInfo.getType()) {
                 case Some(v) where v.isRefType() => v.asRefType().getIdentifier().value
                 case Some(v) where v.isPrimitiveType() => v.asPrimitiveType().getPrimitive().value
-                case Some(v) => "OTHER TYPE"
-                case _ => "NO TYPE"
+                case _ => throw Exception("Field ${name} must be declared with a specific type instead of using a inferred type")
             }
             //typeName = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
         } catch (exp: NoneValueException) {

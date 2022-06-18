@@ -108,6 +108,10 @@ class MyClass <: BaseClass & MyInterface {
     public var boolVar: Bool = false
     public var floatVar: Float64 = 99.01
 
+    //public var array: Array<String> = Array()
+    //public var set: HashSet<String> = HashSet()
+
+
     @JsonIgnore
     public var ignored: String = "OriginalValue"
 
