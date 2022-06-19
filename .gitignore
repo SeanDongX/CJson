@@ -9,3 +9,4 @@ bin/
 debug_*.cj
 /main
 .vscode/cpm_build_args.json
+log.*.txt
