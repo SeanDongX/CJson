@@ -23,14 +23,19 @@ public macro JsonSerializable(input: Tokens): Tokens {
         //reset global config next class
         globalConfig.reset()
         
+        var superTypeExpr = Tokens()
+        if (superTypes.size() != 0) {
+            superTypeExpr = quote(<: $superTypes)
+        }
+
         return quote(
-            $classModifier $classKeyWord $classIdent <: $superTypes {
+            $classModifier $classKeyWord $classIdent $superTypeExpr {
                 $classBody
                 $fromJsonFunc
                 $toJsonFunc
             }
         )
-    } catch(exp: Exception) {
+    } catch(exp: AdaptorMissingException) {
         throw MacroExpansionException("Exception when expending JsonSerializable at class ${classIdent.value} : " + exp.getMessage())
     }
 }
