@@ -11,11 +11,14 @@ let myClassJsonStringWithIgnored = "{\"stringVar1\": \"String1\",\"stringVar2_al
 
 let myNewClassJsonString = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
 
+let nsetedJsonString = "{\"p1\": \"v1\",\"nested\": {\"c1\": 10}}"
+
 main(): Unit {
     testFromJson()
     testToJson()
     testIgnore()
     testFromJsonForTwo()
+    testNested()
 
 }
 
@@ -87,6 +90,24 @@ func testFromJsonForTwo(): Unit {
     println(myNewClass.stringVar1 == myNewClass2.stringVar1 && myNewClass.stringVar2 == myNewClass2.stringVar2 && myNewClass.v4 == myNewClass2.v4)
 }
 
+func testNested() {
+    testNestedFromJson()
+}
+
+func testNestedFromJson(): Unit {
+    var parent = NestedParent()
+    var jsonValues = JsonParser().parse(nsetedJsonString).asObject().getOrThrow()
+    parent.p1 = jsonValues.get("p1").asString().getOrThrow().getValue()
+    
+    parent.nested = NestedChild()
+    var nestedJson = jsonValues.get("nested").asObject().getOrThrow()
+    parent.nested.c1 =nestedJson.get("c1").asInt().getOrThrow().getValue()
+    
+    var parent1 = NestedParent.fromJson(nsetedJsonString)
+    println(parent.p1 == parent1.p1 
+    && parent.nested.c1 == parent1.nested.c1)
+}
+
 interface MyInterface {
     func rotate(): Unit
 }
@@ -144,4 +165,15 @@ class MyNewClass <: BaseClass & MyInterface {
         this.stringVar2 = this.stringVar1
         this.stringVar1 = v
     }
+}
+
+@JsonSerializable
+class NestedChild {
+    public var c1: Int64 = 1
+}
+
+@JsonSerializable
+class NestedParent {
+    public var p1: String = "v1"
+    public var nested: NestedChild = NestedChild()
 }

@@ -39,6 +39,9 @@ class ClassJsonSerilizer <: ClassProcessor {
                 map.put($mappedNameValue, $valueExpr)
             )
         } catch(exp: AdaptorMissingException) {
+            return quote(                    
+                map.put($mappedNameValue, JsonString(this.$identifier.toJson()))
+            )
             throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }
     }

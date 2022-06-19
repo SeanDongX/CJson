@@ -36,16 +36,22 @@ class ClassJsonDeserilizer <: ClassProcessor {
         let jsonValueToken = quote(
                 $jsonOjbectToken.get($mappedNameValue)
         )
-
+        
         try {            
             let valueParseExpr = globalConfig.adaptorFactry.getAdaptor(typeName).fromJsonValue(jsonValueToken)
-        
-            return  quote(                    
+            return quote(                    
                 ret.$identifier = $valueParseExpr
             )
         } catch(exp: AdaptorMissingException) {
-            throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
+            var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
+            return quote(                    
+                ret.$identifier = $classNameToken.fromJson($jsonValueToken.toString())
+            )
+
+            //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }
+
+        return Tokens()
 
     }
 }
