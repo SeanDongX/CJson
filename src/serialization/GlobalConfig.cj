@@ -18,6 +18,8 @@ class GlobalConfig {
         adaptorFactry.registrer("Bool", BoolAdaptor())
         adaptorFactry.registrer("Int64", IntAdaptor())
         adaptorFactry.registrer("Float64", FloatAdaptor())
+        adaptorFactry.registrer("Float64", FloatAdaptor())
+        adaptorFactry.registrer("ArrayList", ArrayAdaptor())
     }
 
     public func reset() {

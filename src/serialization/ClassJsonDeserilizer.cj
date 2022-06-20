@@ -38,11 +38,27 @@ class ClassJsonDeserilizer <: ClassProcessor {
         )
         
         try {            
-            let valueParseExpr = globalConfig.adaptorFactry.getAdaptor(typeName).fromJsonValue(jsonValueToken)
+            var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
+            var input = quote(ret.$identifier)
+            if (adaptor is CollectionJsonAdaptor) {
+                let valueParseExpr = (adaptor as CollectionJsonAdaptor).getOrThrow().fromJsonValue(input, jsonValueToken)
+                return quote(                    
+                    $valueParseExpr
+                )
+
+            } else {
+                let valueParseExpr = adaptor.fromJsonValue(jsonValueToken)
+                return quote(                    
+                    ret.$identifier = $valueParseExpr
+                )
+            }
+
+            let valueParseExpr = adaptor.fromJsonValue(jsonValueToken)
             return quote(                    
                 ret.$identifier = $valueParseExpr
             )
         } catch(exp: AdaptorMissingException) {
+            //TODO: check if class is marked with JsonSerializable
             var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
             return quote(                    
                 ret.$identifier = $classNameToken.fromJson($jsonValueToken.toString())
