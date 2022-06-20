@@ -7,10 +7,10 @@ from std import io.*
 
 import serialization.*
 
-let myClassJsonString = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
-let myClassJsonStringWithIgnored = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09, \"ignored\": \"IgnoredValue\"}"
-let myNewClassJsonString = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
-let nsetedJsonString = "{\"p1\": \"v1\",\"nested\": {\"c1\": 10}}"
+let MYCLASS_JSON = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
+let MYCLASS_JSON_WITH_IGNORE = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09, \"ignored\": \"IgnoredValue\"}"
+let MYNEWCLASS_JSON = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
+let NESTEDJSON = "{\"p1\": \"v1\",\"nested\": {\"c1\": 10}}"
 
 interface MyInterface {
     func rotate(): Unit
@@ -88,14 +88,14 @@ public class TestSerialization {
     @TestCase
     func testFromJson(): Unit {
         var myClass = MyClass()
-        var jsonValues = JsonParser().parse(myClassJsonString).asObject().getOrThrow()
+        var jsonValues = JsonParser().parse(MYCLASS_JSON).asObject().getOrThrow()
         myClass.stringVar1 = jsonValues.get("stringVar1").asString().getOrThrow().getValue()
         myClass.stringVar2 = jsonValues.get("stringVar2_alias").asString().getOrThrow().getValue() 
         myClass.intVar = jsonValues.get("intVar").asInt().getOrThrow().getValue()
         myClass.boolVar = jsonValues.get("boolVar").asBool().getOrThrow().getValue()
         myClass.floatVar = jsonValues.get("floatVar").asFloat().getOrThrow().getValue()
 
-        var myClass1 = MyClass.fromJson(myClassJsonString)
+        var myClass1 = MyClass.fromJson(MYCLASS_JSON)
         println(myClass.stringVar1 == myClass1.stringVar1 
         && myClass.stringVar2 == myClass1.stringVar2 
         && myClass.intVar == myClass1.intVar
@@ -131,43 +131,43 @@ public class TestSerialization {
         myClass.ignored = "SomeValue"
         
         println(!myClass.toJson().contains("ignored"))
-        println(MyClass.fromJson(myClassJsonString).ignored == "OriginalValue")
-        println(MyClass.fromJson(myClassJsonStringWithIgnored).ignored == "OriginalValue")
+        println(MyClass.fromJson(MYCLASS_JSON).ignored == "OriginalValue")
+        println(MyClass.fromJson(MYCLASS_JSON_WITH_IGNORE).ignored == "OriginalValue")
 
     }
 
     @TestCase
     func testFromJsonForTwo(): Unit {
         var myClass = MyClass()
-        var jsonValues = JsonParser().parse(myClassJsonString).asObject().getOrThrow()
+        var jsonValues = JsonParser().parse(MYCLASS_JSON).asObject().getOrThrow()
         myClass.stringVar1 = jsonValues.get("stringVar1").asString().getOrThrow().getValue()
         myClass.stringVar2 = jsonValues.get("stringVar2_alias").asString().getOrThrow().getValue() 
         myClass.intVar = jsonValues.get("intVar").asInt().getOrThrow().getValue()
 
-        var myClass1 = MyClass.fromJson(myClassJsonString)
+        var myClass1 = MyClass.fromJson(MYCLASS_JSON)
         println(myClass.stringVar1 == myClass1.stringVar1 && myClass.stringVar2 == myClass1.stringVar2 && myClass.intVar == myClass1.intVar)
 
         var myNewClass = MyNewClass()
-        var jsonValues2 = JsonParser().parse(myNewClassJsonString).asObject().getOrThrow()
+        var jsonValues2 = JsonParser().parse(MYNEWCLASS_JSON).asObject().getOrThrow()
         myNewClass.stringVar1 = jsonValues2.get("stringVar1").asString().getOrThrow().getValue()
         myNewClass.stringVar2 = jsonValues2.get("stringVar2_alias2").asString().getOrThrow().getValue() 
         myNewClass.v4 = jsonValues2.get("v4").asInt().getOrThrow().getValue()
 
-        var myNewClass2 = MyNewClass.fromJson("{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}")
+        var myNewClass2 = MyNewClass.fromJson(MYNEWCLASS_JSON)
         println(myNewClass.stringVar1 == myNewClass2.stringVar1 && myNewClass.stringVar2 == myNewClass2.stringVar2 && myNewClass.v4 == myNewClass2.v4)
     }
 
     @TestCase
     func testNestedFromJson(): Unit {
         var parent = NestedParent()
-        var jsonValues = JsonParser().parse(nsetedJsonString).asObject().getOrThrow()
+        var jsonValues = JsonParser().parse(NESTEDJSON).asObject().getOrThrow()
         parent.p1 = jsonValues.get("p1").asString().getOrThrow().getValue()
         
         parent.nested = NestedChild()
         var nestedJson = jsonValues.get("nested").asObject().getOrThrow()
         parent.nested.c1 =nestedJson.get("c1").asInt().getOrThrow().getValue()
         
-        var parent1 = NestedParent.fromJson(nsetedJsonString)
+        var parent1 = NestedParent.fromJson(NESTEDJSON)
         println(parent.p1 == parent1.p1 
         && parent.nested.c1 == parent1.nested.c1)
     }
