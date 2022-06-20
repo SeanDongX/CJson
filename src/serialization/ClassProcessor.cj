@@ -10,12 +10,11 @@ open class ClassProcessor {
             typeName = match(fieldInfo.getType()) {
                 case Some(v) where v.isRefType() => v.asRefType().getIdentifier().value
                 case Some(v) where v.isPrimitiveType() => v.asPrimitiveType().getPrimitive().value
-                case _ => throw Exception("Field ${name} must be declared with a specific type instead of using a inferred type")
+                case _ => throw TypeInferrenceException("Field ${name} must be declared with a specific type instead of using a inferred type")
             }
             //typeName = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
         } catch (exp: NoneValueException) {
-            //TODO: make new exception type
-            throw Exception("Field ${name} must be declared with a specific type instead of using a inferred type")
+            throw TypeInferrenceException("Field ${name} must be declared with a specific type instead of using a inferred type")
         }
         
         return (identifier, name, typeName)

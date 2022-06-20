@@ -35,7 +35,7 @@ public macro JsonSerializable(input: Tokens): Tokens {
                 $toJsonFunc
             }
         )
-    } catch(exp: AdaptorMissingException) {
+    } catch(exp: AdaptorMissingException | TypeInferrenceException ) {
         throw MacroExpansionException("Exception when expending JsonSerializable at class ${classIdent.value} : " + exp.getMessage())
     }
 }
