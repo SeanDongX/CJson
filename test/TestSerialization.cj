@@ -96,11 +96,11 @@ public class TestSerialization {
         myClass.floatVar = jsonValues.get("floatVar").asFloat().getOrThrow().getValue()
 
         var myClass1 = MyClass.fromJson(MYCLASS_JSON)
-        println(myClass.stringVar1 == myClass1.stringVar1 
-        && myClass.stringVar2 == myClass1.stringVar2 
-        && myClass.intVar == myClass1.intVar
-        && myClass.boolVar == myClass1.boolVar
-        && myClass.floatVar == myClass1.floatVar)
+        @Assert(myClass.stringVar1, myClass1.stringVar1)
+        @Assert(myClass.stringVar2, myClass1.stringVar2)
+        @Assert(myClass.intVar, myClass1.intVar)
+        @Assert(myClass.boolVar, myClass1.boolVar)
+        @Assert(myClass.floatVar, myClass1.floatVar)
     }
 
     @TestCase
@@ -119,7 +119,7 @@ public class TestSerialization {
         map.put("boolVar", JsonBool(myClass.boolVar))
         map.put("floatVar", JsonFloat(myClass.floatVar))
 
-        println(JsonObject(map).toString() == myClass.toJson())
+        @Assert(JsonObject(map).toString(), myClass.toJson())
     }
 
     @TestCase
@@ -130,9 +130,9 @@ public class TestSerialization {
         myClass.intVar = 10
         myClass.ignored = "SomeValue"
         
-        println(!myClass.toJson().contains("ignored"))
-        println(MyClass.fromJson(MYCLASS_JSON).ignored == "OriginalValue")
-        println(MyClass.fromJson(MYCLASS_JSON_WITH_IGNORE).ignored == "OriginalValue")
+        @Assert(!myClass.toJson().contains("ignored"), true)
+        @Assert(MyClass.fromJson(MYCLASS_JSON).ignored, "OriginalValue")
+        @Assert(MyClass.fromJson(MYCLASS_JSON_WITH_IGNORE).ignored, "OriginalValue")
 
     }
 
@@ -154,7 +154,9 @@ public class TestSerialization {
         myNewClass.v4 = jsonValues2.get("v4").asInt().getOrThrow().getValue()
 
         var myNewClass2 = MyNewClass.fromJson(MYNEWCLASS_JSON)
-        println(myNewClass.stringVar1 == myNewClass2.stringVar1 && myNewClass.stringVar2 == myNewClass2.stringVar2 && myNewClass.v4 == myNewClass2.v4)
+        @Assert(myNewClass.stringVar1, myNewClass2.stringVar1)
+        @Assert(myNewClass.stringVar2, myNewClass2.stringVar2)
+        @Assert(myNewClass.v4, myNewClass2.v4)
     }
 
     @TestCase
@@ -168,8 +170,8 @@ public class TestSerialization {
         parent.nested.c1 =nestedJson.get("c1").asInt().getOrThrow().getValue()
         
         var parent1 = NestedParent.fromJson(NESTEDJSON)
-        println(parent.p1 == parent1.p1 
-        && parent.nested.c1 == parent1.nested.c1)
+        @Assert(parent.p1, parent1.p1)
+        @Assert(parent.nested.c1, parent1.nested.c1)
     }
 
 }
