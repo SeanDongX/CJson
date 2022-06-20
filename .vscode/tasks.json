@@ -9,27 +9,27 @@
             "command": "cpm build"
         },
         {
-            "label": "run",
+            "label": "test",
             "type": "shell",
-            "command": "./bin/main",
+            "command": "cpm test test",
             "problemMatcher": []
         },
         {
-            "label": "build & run",
+            "label": "build & test",
             "type": "shell",
-            "command": "cpm build && ./bin/main",
+            "command": "cpm build && cpm test test",
             "problemMatcher": []
         },
         {
             "label": "debug marco",
             "type": "shell",
-            "command": "cjc ./src/serialization/*.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./src/testSubject.cj",
+            "command": "cjc ./src/serialization/*.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./test/TestSerialization.cj",
             "problemMatcher": []
         },
         {
             "label": "clean debug marco",
             "type": "shell",
-            "command": "rm ./src/debug_testSubject.cj",
+            "command": "rm ./test/debug_TestSerialization.cj",
             "problemMatcher": []
         }
     ]

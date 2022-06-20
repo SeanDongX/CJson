@@ -24,7 +24,7 @@
       "version": "1.0.0",
       "hash": "-2010423268035109051",
       "isMacroPackage": false,
-      "output_type": "executable",
+      "output_type": "static",
       "command_option": "",
       "requires": [
         "cjson/serialization"
