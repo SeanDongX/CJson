@@ -42,6 +42,7 @@ class ClassJsonDeserilizer <: ClassProcessor {
 
             return adaptor.fromJsonValue(quote(ret.$identifier), quote($jsonOjbectVar.get($mappedNameValue)))
         } catch(exp: AdaptorMissingException) {
+            //TODO: check if class is marked with JsonSerializable
             var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
             return quote(                    
                 ret.$identifier = $classNameToken.fromJson($jsonOjbectVar.toString())

@@ -25,7 +25,11 @@ open class ClassProcessor {
         if (globalConfig.userDefinedVarMap.contains(name)) {
             mappedNameValue = globalConfig.userDefinedVarMap.get(name).getOrThrow()
         }
-
+        
         return mappedNameValue
+    }
+
+    protected func getFromJson() {
+        
     }
 }
