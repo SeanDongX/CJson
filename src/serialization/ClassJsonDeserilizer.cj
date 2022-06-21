@@ -33,6 +33,8 @@ class ClassJsonDeserilizer <: ClassProcessor {
         let (identifier, name, typeName) = getFieldInfo(fieldInfo)
         var mappedNameValue = getMappedName(name)
         
+        var nodeJson = quote($jsonOjbectVar.get($mappedNameValue))
+
         try {            
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
             var input = quote(ret.$identifier)
@@ -40,12 +42,12 @@ class ClassJsonDeserilizer <: ClassProcessor {
                 //todo: set collection generic type
             }
 
-            return adaptor.fromJsonValue(quote(ret.$identifier), quote($jsonOjbectVar.get($mappedNameValue)))
+            return adaptor.fromJsonValue(quote(ret.$identifier), nodeJson)
         } catch(exp: AdaptorMissingException) {
             //TODO: check if class is marked with JsonSerializable
             var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
             return quote(                    
-                ret.$identifier = $classNameToken.fromJson($jsonOjbectVar.toString())
+                ret.$identifier = $classNameToken.fromJson($nodeJson.toString())
             )
 
             //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
