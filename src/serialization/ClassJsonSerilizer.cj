@@ -28,10 +28,6 @@ class ClassJsonSerilizer <: ClassProcessor {
         let (identifier, name, typeName) = getFieldInfo(fieldInfo)        
         var mappedNameValue = getMappedName(name)
 
-        if (globalConfig.userDefinedVarMap.contains(name)) {
-            mappedNameValue = globalConfig.userDefinedVarMap.get(name).getOrThrow()
-        }
-
         try {
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
             
