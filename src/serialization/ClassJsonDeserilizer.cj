@@ -28,24 +28,23 @@ class ClassJsonDeserilizer <: ClassProcessor {
         return fieldParseToken
     }
 
-    private func parseJsonFiled(fieldInfo: NodeFormat_VarDecl, jsonOjbectToken: Token): Tokens {
+    private func parseJsonFiled(fieldInfo: NodeFormat_VarDecl, jsonOjbectVar: Token): Tokens {
         //TODO: get type from getType() or init Func()
         let (identifier, name, typeName) = getFieldInfo(fieldInfo)
         var mappedNameValue = getMappedName(name)
         
-        let jsonValueToken = quote(
-                $jsonOjbectToken.get($mappedNameValue)
-        )
-        
         try {            
-            let valueParseExpr = globalConfig.adaptorFactry.getAdaptor(typeName).fromJsonValue(jsonValueToken)
-            return quote(                    
-                ret.$identifier = $valueParseExpr
-            )
+            var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
+            var input = quote(ret.$identifier)
+            if (adaptor is JsonCollectionAdaptor) {
+                //todo: set collection generic type
+            }
+
+            return adaptor.fromJsonValue(quote(ret.$identifier), quote($jsonOjbectVar.get($mappedNameValue)))
         } catch(exp: AdaptorMissingException) {
             var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
             return quote(                    
-                ret.$identifier = $classNameToken.fromJson($jsonValueToken.toString())
+                ret.$identifier = $classNameToken.fromJson($jsonOjbectVar.toString())
             )
 
             //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")

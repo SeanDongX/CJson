@@ -28,16 +28,14 @@ class ClassJsonSerilizer <: ClassProcessor {
         let (identifier, name, typeName) = getFieldInfo(fieldInfo)        
         var mappedNameValue = getMappedName(name)
 
-        if (globalConfig.userDefinedVarMap.contains(name)) {
-            mappedNameValue = globalConfig.userDefinedVarMap.get(name).getOrThrow()
-        }
-
-        try {            
-            let valueExpr = globalConfig.adaptorFactry.getAdaptor(typeName).toJsonValue(identifier)
-                    
-            return quote(
-                map.put($mappedNameValue, $valueExpr)
-            )
+        try {
+            var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
+            
+            if (adaptor is JsonCollectionAdaptor) {
+                
+            }
+            
+            return adaptor.toJsonValue(quote(map), quote($mappedNameValue), quote(this.$identifier))                        
         } catch(exp: AdaptorMissingException) {
             return quote(                    
                 map.put($mappedNameValue, JsonString(this.$identifier.toJson()))

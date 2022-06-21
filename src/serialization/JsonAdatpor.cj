@@ -4,69 +4,70 @@ interface JsonAdaptor {
     
     /*
     / Composes an expression with jsonValue as input for deserialization
-    / for example: quote($jsonValueToken.asString().getOrThrow().getValue())
+    / for example: quote($valueReceiver = $jsonValueToken.asString().getOrThrow().getValue())
     */
-    func fromJsonValue(jsonToken: Tokens): Tokens
+    func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens
     
     /*
     / Composes an expression with identifier as input for serialization
-    / for example: quote(JsonString(this.$identifier))
+    / for example: quote($jsonMapVar.put($keyVar, JsonString($valueVar)))
     */
-    func toJsonValue(identifier: Token): Tokens
+    func toJsonValue(jsonMapVar: Tokens,  keyVar: Tokens, valueVar: Tokens): Tokens
 }
 
 class StringAdaptor <: JsonAdaptor {
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
         return quote(
-            $jsonToken.asString().getOrThrow().getValue()
+           $valueReceiver = $jsonVar.asString().getOrThrow().getValue()
         )
     }
     
-    public func toJsonValue(identifier: Token): Tokens {
+    public func toJsonValue(jsonMapVar: Tokens,  keyVar: Tokens, valueVar: Tokens): Tokens {
         return quote(
-            JsonString(this.$identifier)
+            $jsonMapVar.put($keyVar, JsonString($valueVar)) 
         )
     }
 }
 
 class BoolAdaptor <: JsonAdaptor {
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
         return quote(
-            $jsonToken.asBool().getOrThrow().getValue()
+           $valueReceiver = $jsonVar.asBool().getOrThrow().getValue()
         )
     }
     
-    public func toJsonValue(identifier: Token): Tokens {
+    public func toJsonValue(jsonMapVar: Tokens,  keyVar: Tokens, valueVar: Tokens): Tokens {
         return quote(
-            JsonBool(this.$identifier)
+            $jsonMapVar.put($keyVar, JsonBool($valueVar)) 
         )
     }
 }
 
 class IntAdaptor <: JsonAdaptor {
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
+        public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
         return quote(
-            $jsonToken.asInt().getOrThrow().getValue()
+           $valueReceiver = $jsonVar.asInt().getOrThrow().getValue()
         )
     }
     
-    public func toJsonValue(identifier: Token): Tokens {
+    public func toJsonValue(jsonMapVar: Tokens,  keyVar: Tokens, valueVar: Tokens): Tokens {
         return quote(
-            JsonInt(this.$identifier)
+            $jsonMapVar.put($keyVar, JsonInt($valueVar)) 
         )
     }
 }
 
 class FloatAdaptor <: JsonAdaptor {
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
+
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
         return quote(
-            $jsonToken.asFloat().getOrThrow().getValue()
+           $valueReceiver = $jsonVar.asFloat().getOrThrow().getValue()
         )
     }
     
-    public func toJsonValue(identifier: Token): Tokens {
+    public func toJsonValue(jsonMapVar: Tokens,  keyVar: Tokens, valueVar: Tokens): Tokens {
         return quote(
-            JsonFloat(this.$identifier)
+            $jsonMapVar.put($keyVar, JsonFloat($valueVar)) 
         )
     }
 }

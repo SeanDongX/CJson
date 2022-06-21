@@ -3,8 +3,8 @@ macro package serialization
 class JsonAdaptorFactory {
     private let map: HashMap<String, JsonAdaptor> = HashMap()
     
-    public func registrer(identifierValue: String, adaptor: JsonAdaptor) {
-        map.put(identifierValue, adaptor)
+    public func registrer(identifier: String, adaptor: JsonAdaptor) {
+        map.put(identifier, adaptor)
     }
 
     public func getAdaptor(identifier: String): JsonAdaptor {
