@@ -32,10 +32,19 @@ class ClassJsonSerilizer <: ClassProcessor {
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
             
             if (adaptor is JsonCollectionAdaptor) {
-                
+                (adaptor as JsonCollectionAdaptor).getOrThrow().setContainerType(fieldInfo.getType().getOrThrow())   
             }
-            
-            return adaptor.toJsonValue(quote(map), quote($mappedNameValue), quote(this.$identifier))                        
+                        
+            var jsonValueFuncName_Tk = Tokens([Token(TokenKind.IDENTIFIER, "getValue_" + identifier.value)])
+            var jsonValueFunc_Tk = adaptor.toJsonValueFunc(quote(this.$identifier), jsonValueFuncName_Tk)
+            return quote(
+                //define a func to getValue in place
+                $jsonValueFunc_Tk
+
+                //invoke the func
+                map.put($mappedNameValue, $jsonValueFuncName_Tk())
+            )
+
         } catch(exp: AdaptorMissingException) {
             return quote(                    
                 map.put($mappedNameValue, JsonString(this.$identifier.toJson()))

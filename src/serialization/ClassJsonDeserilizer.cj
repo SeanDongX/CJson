@@ -39,10 +39,7 @@ class ClassJsonDeserilizer <: ClassProcessor {
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
             var input = quote(ret.$identifier)
             if (adaptor is JsonCollectionAdaptor) {
-                //todo: set collection generic type
-                //var genericType: NodeFormat_Type = fieldInfo.getType().getOrThrow().asRefType().getArgs()[0]
-                (adaptor as JsonCollectionAdaptor).getOrThrow().setContainerType(fieldInfo.getType().getOrThrow())
-                               
+                (adaptor as JsonCollectionAdaptor).getOrThrow().setContainerType(fieldInfo.getType().getOrThrow())                               
             }
 
             return adaptor.fromJsonValue(quote(ret.$identifier), nodeJson)

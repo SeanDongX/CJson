@@ -7,7 +7,7 @@ from std import io.*
 
 import serialization.*
 
-let JSON_WITH_COLLECTION = "{\"p1\": \"v1\",\"array\": [\"c1\", \"c2\", \"c3\"]}"
+let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"array\":[\"c1\",\"c2\",\"c3\"]}"
 
 @JsonSerializable
 class ClassWithCollction {
@@ -19,7 +19,7 @@ class ClassWithCollction {
 class TestCollection {
 
     @TestCase
-    func testJonWithCollectionFrom(): Unit {
+    func testFromJson(): Unit {
         var classWithCollection = ClassWithCollction()
         
         var jsonValues = JsonParser().parse(JSON_WITH_COLLECTION).asObject().getOrThrow()
@@ -35,5 +35,10 @@ class TestCollection {
         var classWithCollection1 = ClassWithCollction.fromJson(JSON_WITH_COLLECTION)
         @Assert(classWithCollection.p1, classWithCollection1.p1)
         @Assert(classWithCollection.array, classWithCollection1.array)
+    }
+
+    @TestCase
+    func testToJson(): Unit {        
+        @Assert(ClassWithCollction.fromJson(JSON_WITH_COLLECTION).toJson(), JSON_WITH_COLLECTION)
     }
 }
