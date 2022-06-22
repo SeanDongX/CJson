@@ -28,40 +28,26 @@ class ClassJsonDeserilizer <: ClassProcessor {
         return fieldParseToken
     }
 
-    private func parseJsonFiled(fieldInfo: NodeFormat_VarDecl, jsonOjbectToken: Token): Tokens {
+    private func parseJsonFiled(fieldInfo: NodeFormat_VarDecl, jsonOjbectVar: Token): Tokens {
         //TODO: get type from getType() or init Func()
         let (identifier, name, typeName) = getFieldInfo(fieldInfo)
         var mappedNameValue = getMappedName(name)
         
-        let jsonValueToken = quote(
-                $jsonOjbectToken.get($mappedNameValue)
-        )
-        
+        var nodeJson = quote($jsonOjbectVar.get($mappedNameValue))
+
         try {            
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
             var input = quote(ret.$identifier)
-            if (adaptor is CollectionJsonAdaptor) {
-                let valueParseExpr = (adaptor as CollectionJsonAdaptor).getOrThrow().fromJsonValue(input, jsonValueToken)
-                return quote(                    
-                    $valueParseExpr
-                )
-
-            } else {
-                let valueParseExpr = adaptor.fromJsonValue(jsonValueToken)
-                return quote(                    
-                    ret.$identifier = $valueParseExpr
-                )
+            if (adaptor is JsonCollectionAdaptor) {
+                (adaptor as JsonCollectionAdaptor).getOrThrow().setContainerType(fieldInfo.getType().getOrThrow())                               
             }
 
-            let valueParseExpr = adaptor.fromJsonValue(jsonValueToken)
-            return quote(                    
-                ret.$identifier = $valueParseExpr
-            )
+            return adaptor.fromJsonValue(quote(ret.$identifier), nodeJson)
         } catch(exp: AdaptorMissingException) {
             //TODO: check if class is marked with JsonSerializable
             var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
             return quote(                    
-                ret.$identifier = $classNameToken.fromJson($jsonValueToken.toString())
+                ret.$identifier = $classNameToken.fromJson($nodeJson.toString())
             )
 
             //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")

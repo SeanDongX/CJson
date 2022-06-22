@@ -17,3 +17,4 @@ class MacroExpansionException <: Exception {
         super(message)
     }
 }
+

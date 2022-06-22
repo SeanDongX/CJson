@@ -31,18 +31,20 @@ class ClassJsonSerilizer <: ClassProcessor {
         try {
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
             
-            if (adaptor is CollectionJsonAdaptor) {
-                let valueParseExpr = (adaptor as CollectionJsonAdaptor).getOrThrow().toJsonValue(quote(map), quote($mappedNameValue), quote(this.$identifier))
-                return quote(                    
-                    $valueParseExpr
-                )
-
-            } else {
-                let valueExpr = globalConfig.adaptorFactry.getAdaptor(typeName).toJsonValue(identifier)                        
-                return quote(
-                    map.put($mappedNameValue, $valueExpr)
-                )
+            if (adaptor is JsonCollectionAdaptor) {
+                (adaptor as JsonCollectionAdaptor).getOrThrow().setContainerType(fieldInfo.getType().getOrThrow())   
             }
+                        
+            var jsonValueFuncName_Tk = Tokens([Token(TokenKind.IDENTIFIER, "getValue_" + identifier.value)])
+            var jsonValueFunc_Tk = adaptor.toJsonValueFunc(quote(this.$identifier), jsonValueFuncName_Tk)
+            return quote(
+                //define a func to getValue in place
+                $jsonValueFunc_Tk
+
+                //invoke the func
+                map.put($mappedNameValue, $jsonValueFuncName_Tk())
+            )
+
         } catch(exp: AdaptorMissingException) {
             return quote(                    
                 map.put($mappedNameValue, JsonString(this.$identifier.toJson()))

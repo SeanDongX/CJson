@@ -4,125 +4,83 @@ interface JsonAdaptor {
     
     /*
     / Composes an expression with jsonValue as input for deserialization
-    / for example: quote($jsonValueToken.asString().getOrThrow().getValue())
+    / for example: quote($valueReceiver = $jsonValueToken.asString().getOrThrow().getValue())
     */
-    func fromJsonValue(jsonToken: Tokens): Tokens
+    func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens
     
     /*
-    / Composes an expression with identifier as input for serialization
-    / for example: quote(JsonString(this.$identifier))
+    / Composes a func for serialization of the valueVar, this func can be invoked later with funcName_Tk()
+    / for example:
+    /   return quote(
+    /       func $funcName_Tk() {
+    /           return JsonString($valueVar_Tk)
+    /       }
+    /   )
     */
-    func toJsonValue(identifier: Token): Tokens
-}
-
-interface CollectionJsonAdaptor <: JsonAdaptor {
-    func setGenericType(typeName: String): Unit
-    func setContainerType(typeName: String): Unit
-    func fromJsonValue(receipentToken: Tokens, jsonToken: Tokens): Tokens
-    func toJsonValue(receipentToken: Tokens, keyToken: Tokens, jsonToken: Tokens): Tokens
+    func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens): Tokens
 }
 
 class StringAdaptor <: JsonAdaptor {
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
         return quote(
-            $jsonToken.asString().getOrThrow().getValue()
+           $valueReceiver = $jsonVar.asString().getOrThrow().getValue()
         )
     }
     
-    public func toJsonValue(identifier: Token): Tokens {
+    public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens): Tokens {
         return quote(
-            JsonString(this.$identifier)
+            func $funcName_Tk() {
+                return JsonString($valueVar_Tk)
+            }
         )
     }
 }
 
 class BoolAdaptor <: JsonAdaptor {
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
         return quote(
-            $jsonToken.asBool().getOrThrow().getValue()
+           $valueReceiver = $jsonVar.asBool().getOrThrow().getValue()
         )
     }
     
-    public func toJsonValue(identifier: Token): Tokens {
+    public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens): Tokens {
         return quote(
-            JsonBool(this.$identifier)
+            func $funcName_Tk() {
+                return JsonBool($valueVar_Tk)
+            }
         )
     }
 }
 
 class IntAdaptor <: JsonAdaptor {
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
+        public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
         return quote(
-            $jsonToken.asInt().getOrThrow().getValue()
+           $valueReceiver = $jsonVar.asInt().getOrThrow().getValue()
         )
     }
-    
-    public func toJsonValue(identifier: Token): Tokens {
+
+    public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens): Tokens {
         return quote(
-            JsonInt(this.$identifier)
+            func $funcName_Tk() {
+                return JsonInt($valueVar_Tk)
+            }
         )
     }
 }
 
 class FloatAdaptor <: JsonAdaptor {
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
+
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
         return quote(
-           $jsonToken.asFloat().getOrThrow().getValue()
+           $valueReceiver = $jsonVar.asFloat().getOrThrow().getValue()
         )
     }
-    
-    public func toJsonValue(identifier: Token): Tokens {
+
+    public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens): Tokens {
         return quote(
-            JsonFloat(this.$identifier)
-        )
-    }
-}
-
-class ArrayAdaptor <: CollectionJsonAdaptor {
-    private var containerType: String = "ArrayList"
-    private var genericType: String = "String"
-
-    public func setContainerType(typeName: String) {
-        containerType = typeName
-    }
-
-    public func setGenericType(typeName: String) {
-        genericType = typeName
-    }
-
-    public func fromJsonValue(receipentToken: Tokens, jsonToken: Tokens): Tokens {
-        var adaptor = StringAdaptor()
-        var containerTypeIdentifier = Token(TokenKind.IDENTIFIER, containerType)
-        var genericTypeIdentifier = Token(TokenKind.IDENTIFIER, genericType)
-        
-        return quote(
-            $receipentToken = $containerTypeIdentifier<$genericTypeIdentifier>()
-            for (jsonValue in $jsonToken.asArray().getOrThrow().getItems()) {
-                ////TODO: User adaptor to evaluate: $(adaptor.fromJsonValue(jsonValue)
-                ret.array.add(jsonValue.asString().getOrThrow().getValue())
+            func $funcName_Tk() {
+                return JsonFloat($valueVar_Tk)
             }
-        ) 
-    }
-    
-    //TODO: remove
-    public func fromJsonValue(jsonToken: Tokens): Tokens {
-        return Tokens()
-    }
-
-    public func toJsonValue(mapToken: Tokens,  keyToken: Tokens, identifier: Tokens): Tokens {
-        return quote(
-            var jsonArray = JsonArray()            
-            for (element in $identifier) {
-                ////TODO: User adaptor to evaluate: $(adaptor.toJsonValue(jsonValue)
-                jsonArray.add(JsonString(element))
-            }
-
-            $mapToken.put($keyToken, jsonArray)
         )
-    }
-
-    //TODO: remove
-    public func toJsonValue(identifier: Token): Tokens {        
-        return Tokens()
     }
 }

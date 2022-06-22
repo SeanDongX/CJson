@@ -28,4 +28,8 @@ open class ClassProcessor {
         
         return mappedNameValue
     }
+
+    protected func getFromJson() {
+        
+    }
 }
