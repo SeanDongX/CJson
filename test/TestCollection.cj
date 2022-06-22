@@ -7,12 +7,14 @@ from std import io.*
 
 import serialization.*
 
-let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"array\":[\"c1\",\"c2\",\"c3\"]}"
-
+let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[\"8\",\"7\",\"999\"],\"set\":[\"true\",\"false\"]}"
 @JsonSerializable
 class ClassWithCollction {
     public var p1: String = "v1"
-    public var array: ArrayList<String> = ArrayList()
+    public var p2: Int64 = 1
+    public var array: ArrayList<String> =  ArrayList<String>()
+    public var set: HashSet<String> = HashSet<String>()
+    //TODO: fix error when using HashSet<Int64> Array<Bool> Array<Float>
 }
 
 @Test
@@ -32,9 +34,17 @@ class TestCollection {
             classWithCollection.array.add(value.asString().getOrThrow().getValue())
         }
 
+        classWithCollection.set = HashSet<String>()
+        jsonArray = jsonValues.get("set").asArray().getOrThrow()
+        
+        for (value in jsonArray.getItems()) {
+            classWithCollection.set.put(value.asString().getOrThrow().getValue())
+        }
+
         var classWithCollection1 = ClassWithCollction.fromJson(JSON_WITH_COLLECTION)
         @Assert(classWithCollection.p1, classWithCollection1.p1)
         @Assert(classWithCollection.array, classWithCollection1.array)
+        @Assert(classWithCollection.set, classWithCollection1.set)
     }
 
     @TestCase
@@ -42,3 +52,5 @@ class TestCollection {
         @Assert(ClassWithCollction.fromJson(JSON_WITH_COLLECTION).toJson(), JSON_WITH_COLLECTION)
     }
 }
+
+main() {}

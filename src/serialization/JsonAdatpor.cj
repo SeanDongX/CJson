@@ -6,7 +6,7 @@ interface JsonAdaptor {
     / Composes an expression with jsonValue as input for deserialization
     / for example: quote($valueReceiver = $jsonValueToken.asString().getOrThrow().getValue())
     */
-    func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens
+    func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens
     
     /*
     / Composes a func for serialization of the valueVar, this func can be invoked later with funcName_Tk()
@@ -21,7 +21,7 @@ interface JsonAdaptor {
 }
 
 class StringAdaptor <: JsonAdaptor {
-    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
         return quote(
            $valueReceiver = $jsonVar.asString().getOrThrow().getValue()
         )
@@ -37,7 +37,7 @@ class StringAdaptor <: JsonAdaptor {
 }
 
 class BoolAdaptor <: JsonAdaptor {
-    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
         return quote(
            $valueReceiver = $jsonVar.asBool().getOrThrow().getValue()
         )
@@ -53,7 +53,7 @@ class BoolAdaptor <: JsonAdaptor {
 }
 
 class IntAdaptor <: JsonAdaptor {
-        public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
         return quote(
            $valueReceiver = $jsonVar.asInt().getOrThrow().getValue()
         )
@@ -70,7 +70,7 @@ class IntAdaptor <: JsonAdaptor {
 
 class FloatAdaptor <: JsonAdaptor {
 
-    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens): Tokens {
+    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
         return quote(
            $valueReceiver = $jsonVar.asFloat().getOrThrow().getValue()
         )
