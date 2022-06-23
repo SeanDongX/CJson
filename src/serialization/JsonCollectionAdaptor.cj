@@ -1,83 +1,74 @@
 macro package serialization
 
-interface JsonCollectionAdaptor <: JsonAdaptor {
-    func setContainerType(containerType: NodeFormat_Type): Unit
-}
-
-class ArrayAdaptor <: JsonCollectionAdaptor {
+abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
     private var adaptorFactory: JsonAdaptorFactory
-    //private var containerType: String = "ArrayList"
-    private var containerType: Option<NodeFormat_Type> = None
-
+    
     public init(adaptorFactory: JsonAdaptorFactory) {
         this.adaptorFactory = adaptorFactory
     }
 
-    public func setContainerType(containerType: NodeFormat_Type): Unit {
-        this.containerType = containerType 
-    }
+    func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens
 
     protected func getContainerIdentifier(): String {
-        return this.containerType.getOrThrow().asRefType().getIdentifier().value
+        return thisType.getOrThrow().getTypeName()
     }
 
     protected func getGenericType(): NodeFormat_Type {
-        return containerType.getOrThrow().asRefType().getArgs()[0]                
+        return thisType.getOrThrow().asRefType().getArgs()[0]
     }
     
     protected func getGenericTypeName(): String {
-        return getGenericType().asRefType().getIdentifier().value
+        return getGenericType().getTypeName()
     }
 
     public func getGenericTypeAdaptor(): JsonAdaptor {
-        return this.adaptorFactory.getAdaptor(getGenericTypeName())
+        return adaptorFactory.getAdaptor(getGenericTypeName())
     }
 
-    public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens): Tokens {
-        var genericTypeName =  getGenericTypeName()
-        var genericAdaptor = adaptorFactory.getAdaptor(genericTypeName)
-                        
-        if (genericAdaptor is JsonCollectionAdaptor) {
-             //TODO: make work with loop eg. Array<Array<Array<<<T>>>
-             throw Exception("Collection inside collection (such as Array<Array<T>>) is not supported ")
-        }
+    public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
+        var containType_Tk = getType()
+        var genericType_Tk = getGenericType()
+        var genericReceiver = varIdentifierName + "_val"
+        var genericVar_Tk = Tokens([Token(TokenKind.IDENTIFIER, genericReceiver)])
+        var itemVar_Tk = Tokens([Token(TokenKind.IDENTIFIER, varIdentifierName + "_item")])
 
-        var containType_Tk = containerType.getOrThrow().asRefType().getIdentifier()
-        var genericType_Tk = Token(TokenKind.IDENTIFIER, genericTypeName)
-        var genericVar_Tk = Tokens([Token(TokenKind.IDENTIFIER, "elementValue")])
-        var itemVar_Tk = Tokens([Token(TokenKind.IDENTIFIER, "item")])
-
-        var genericValueProcess_Tk = genericAdaptor.fromJsonValue(genericVar_Tk, itemVar_Tk)
+        // genericAdaptor needs to be fetched and mutated after the token composition above finished,
+        // since the collection adaptor are reused (fx between HashSet<Hashset<String>> & Hashset<String>)
+        // and mutating the state will cause unwanted side effect.
+        // Another solution would be creating new adaptors everytime, but that is not memory efficient
+        var genericAdaptor = adaptorFactory.getAdaptor(getGenericTypeName())
+        genericAdaptor.setType(genericType_Tk)     
+        var genericValueProcess_Tk = genericAdaptor.fromJsonValue(genericVar_Tk, itemVar_Tk, genericReceiver)
+        var insertValueExpr_Tk = insertValueExpr(valueReceiver_Tk, genericVar_Tk)
         
         return quote(
-            $valueReceiver_Tk = $containType_Tk<$genericType_Tk>()
+            $valueReceiver_Tk = $containType_Tk()
             var $genericVar_Tk: $genericType_Tk
 
             for ($itemVar_Tk in $jsonVar_Tk.asArray().getOrThrow().getItems()) {                
-                $(genericValueProcess_Tk)
-                $valueReceiver_Tk.add($genericVar_Tk)
+                $genericValueProcess_Tk
+                $insertValueExpr_Tk
             }
         )
     }
 
-     public func toJsonValueFunc(valueSource_Tk: Tokens, funcName_Tk: Tokens): Tokens {
-        var genericTypeName =  getGenericTypeName()
-        var genericAdaptor = adaptorFactory.getAdaptor(genericTypeName)
-                        
-        if (genericAdaptor is JsonCollectionAdaptor) {
-             //TODO: make work with loop eg. Array<Array<Array<<<T>>>
-             throw Exception("Collection inside collection (such as Array<Array<T>>) is not supported ")
-        }
+     public func toJsonValueFunc(valueSource_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
+        var genericValueFuncName_TK = Tokens([Token(TokenKind.IDENTIFIER, "getVal_" + getContainerIdentifier())])
+        var genericReceiver = varIdentifierName + "_val"
+        var elementVar_Tk = Tokens([Token(TokenKind.IDENTIFIER, genericReceiver)])
 
-        var elementVat_Tk = quote(element)
-        var containerIdentifier = getContainerIdentifier()
-        var genericValueFuncName_TK = Tokens([Token(TokenKind.IDENTIFIER, "getValue_" + containerIdentifier)])
-        var geneticValueFunc_Tk = genericAdaptor.toJsonValueFunc(elementVat_Tk, genericValueFuncName_TK)
+        // genericAdaptor needs to be fetched and mutated after the token composition above finished,
+        // since the collection adaptor are reused (fx between HashSet<Hashset<String>> & Hashset<String>)
+        // and mutating the state will cause unwanted side effect.
+        // Another solution would be creating new adaptors everytime, but that is not memory efficient        
+        var genericAdaptor = adaptorFactory.getAdaptor( getGenericTypeName())
+        genericAdaptor.setType(getGenericType())
+        var geneticValueFunc_Tk = genericAdaptor.toJsonValueFunc(elementVar_Tk, genericValueFuncName_TK, genericReceiver)
 
         return quote(
             func $funcName_Tk() {
                 var jsonArray = JsonArray()            
-                for ($elementVat_Tk in $valueSource_Tk) {
+                for ($elementVar_Tk in $valueSource_Tk) {
                     //define a getValue func in place
                     $geneticValueFunc_Tk
 
@@ -90,3 +81,29 @@ class ArrayAdaptor <: JsonCollectionAdaptor {
         )
     }
 }
+
+class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
+    public init(adaptorFactory: JsonAdaptorFactory) {
+        super(adaptorFactory)
+    }
+
+    protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens {
+        return quote(
+            $valueReceiver_Tk.add($genericVar_Tk)
+        )
+    }
+}
+
+class HashSetAdaptor <: JsonCollectionAdaptorImpl {
+    public init(adaptorFactory: JsonAdaptorFactory) {
+        super(adaptorFactory)
+    }
+    
+    protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens {
+        return quote(
+            $valueReceiver_Tk.put($genericVar_Tk)
+        )
+    }
+}
+
+

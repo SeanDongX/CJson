@@ -7,12 +7,7 @@ open class ClassProcessor {
         var typeName: String
 
         try {
-            typeName = match(fieldInfo.getType()) {
-                case Some(v) where v.isRefType() => v.asRefType().getIdentifier().value
-                case Some(v) where v.isPrimitiveType() => v.asPrimitiveType().getPrimitive().value
-                case _ => throw TypeInferrenceException("Field ${name} must be declared with a specific type instead of using a inferred type")
-            }
-            //typeName = fieldInfo.getType().getOrThrow().asRefType().getIdentifier().value
+            typeName = fieldInfo.getType().getOrThrow().getTypeName()
         } catch (exp: NoneValueException) {
             throw TypeInferrenceException("Field ${name} must be declared with a specific type instead of using a inferred type")
         }
