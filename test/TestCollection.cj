@@ -1,0 +1,29 @@
+from std import unittest.*
+from std import unittest.testmacro.*
+
+from encoding import json.*
+from std import collection.*
+from std import io.*
+
+import serialization.*
+
+let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[[\"8\"],[\"7\"],[\"999\",\"25\"]],\"set\":[\"v1\",\"v2\"]}"
+
+@JsonSerializable
+class ClassWithCollction {
+    public var p1: String = "v1"
+    public var p2: Int64 = 1
+    public var array: ArrayList<ArrayList<String>> =  ArrayList<ArrayList<String>>()
+    public var set: HashSet<String> = HashSet<String>()
+    //TODO: fix error when using HashSet<Int64> Array<Bool> Array<Float>
+}
+
+@Test
+class TestCollection {
+    @TestCase
+    func testToJson(): Unit {        
+        @Assert(ClassWithCollction.fromJson(JSON_WITH_COLLECTION).toJson(), JSON_WITH_COLLECTION)
+    }
+}
+
+main() {}

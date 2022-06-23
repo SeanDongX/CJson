@@ -6,27 +6,31 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "cjc ./src/myMacro/testMarco.cj --output-type=dylib -o m.so && cpm build"
+            "command": "cpm build"
         },
         {
-            "label": "run",
+            "label": "test",
             "type": "shell",
-            "command": "./bin/main",
+            "command": "cpm test test",
+            "problemMatcher": []
+        },
+        {
+            "label": "build & test",
+            "type": "shell",
+            "command": "cpm build && cpm test test",
             "problemMatcher": []
         },
         {
             "label": "debug marco",
             "type": "shell",
-            "command": "cjc ./src/myMacro/testMarco.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./src/main.cj",
+            "command": "cjc ./src/serialization/*.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./test/TestSerialization.cj",
             "problemMatcher": []
         },
         {
             "label": "clean debug marco",
             "type": "shell",
-            "command": "rm ./src/debug_main.cj",
+            "command": "rm ./test/debug_TestSerialization.cj",
             "problemMatcher": []
         }
-
-        debug_main.cj
     ]
 }
