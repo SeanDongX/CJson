@@ -10,7 +10,6 @@ import serialization.*
 let MYCLASS_JSON = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
 let MYCLASS_JSON_WITH_IGNORE = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09, \"ignored\": \"IgnoredValue\"}"
 let MYNEWCLASS_JSON = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
-let NESTED_JSON = "{\"p1\": \"v1\",\"nested\": {\"c1\": 10}}"
 
 interface MyInterface {
     func rotate(): Unit
@@ -66,17 +65,6 @@ class MyNewClass <: BaseClass & MyInterface {
         this.stringVar2 = this.stringVar1
         this.stringVar1 = v
     }
-}
-
-@JsonSerializable
-class NestedChild {
-    public var c1: Int64 = 1
-}
-
-@JsonSerializable
-class NestedParent {
-    public var p1: String = "v1"
-    public var nested: NestedChild = NestedChild()
 }
 
 @Test
@@ -156,20 +144,5 @@ public class TestSerialization {
         @Assert(myNewClass.stringVar1, myNewClass2.stringVar1)
         @Assert(myNewClass.stringVar2, myNewClass2.stringVar2)
         @Assert(myNewClass.v4, myNewClass2.v4)
-    }
-
-    @TestCase
-    func testNestedFromJson(): Unit {
-        var parent = NestedParent()
-        var jsonValues = JsonParser().parse(NESTED_JSON).asObject().getOrThrow()
-        parent.p1 = jsonValues.get("p1").asString().getOrThrow().getValue()
-        
-        parent.nested = NestedChild()
-        var nestedJson = jsonValues.get("nested").asObject().getOrThrow()
-        parent.nested.c1 =nestedJson.get("c1").asInt().getOrThrow().getValue()
-        
-        var parent1 = NestedParent.fromJson(NESTED_JSON)
-        @Assert(parent.p1, parent1.p1)
-        @Assert(parent.nested.c1, parent1.nested.c1)
     }
 }
