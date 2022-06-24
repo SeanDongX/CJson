@@ -1,20 +1,30 @@
 macro package serialization
 
+/*
+* Processor for decorated class
+*/
 open class ClassProcessor {
-    protected func getFieldInfo(vark_Tk: NodeFormat_VarDecl): (Token, String, String) {
+
+    /*
+    * Gets information from var token
+    * @param vark_Tk the var token to get information from
+    * @return (Token, String, String) the identifier, name, type name of the var
+    */
+    protected func getVarInfo(vark_Tk: NodeFormat_VarDecl): (Token, String, String) {
         return vark_Tk.getVarInfo()
     }
 
-    protected func getMappedName(name: String): String {
-        var mappedNameValue = name
-        if (globalConfig.userDefinedVarMap.contains(name)) {
-            mappedNameValue = globalConfig.userDefinedVarMap.get(name).getOrThrow()
+    /*
+    * Gets mapped name for given var name from user defined name mapping by @JsonName macro
+    * @param varName to get mapped name for
+    * @return String the mapped name 
+    */
+    protected func getMappedName(varName: String): String {
+        var mappedNameValue = varName
+        if (globalConfig.userDefinedVarMap.contains(varName)) {
+            mappedNameValue = globalConfig.userDefinedVarMap.get(varName).getOrThrow()
         }
         
         return mappedNameValue
-    }
-
-    protected func getFromJson() {
-        
     }
 }

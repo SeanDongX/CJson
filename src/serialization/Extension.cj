@@ -1,6 +1,12 @@
 macro package serialization
 
 extend NodeFormat_Type {
+
+    /*
+    * Gets the type name
+    *
+    * @return String the name of the type
+    */
     public func getTypeName(): String {
         try {
 
@@ -16,7 +22,8 @@ extend NodeFormat_Type {
 }
 
 extend NodeFormat_VarDecl {
-    /**
+
+    /*
      * Get info from VarDecl
      *
      * @return (Token, String, String) the identifier, name, type name of the var

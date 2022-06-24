@@ -1,5 +1,8 @@
 macro package serialization
 
+/*
+* Core implementation of JsonAdaptor for collections
+*/
 abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
     private var adaptorFactory: JsonAdaptorFactory
     
@@ -7,6 +10,12 @@ abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
         this.adaptorFactory = adaptorFactory
     }
 
+    /*
+    * Abstract func for inserting generic var into collections
+    * @param valueReceiver_Tk the collection var token to receive the generic value
+    * @param genericVar_Tk the generic var token to be inserted
+    * @return token representation
+    */
     func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens
 
     protected func getContainerIdentifier(): String {
@@ -52,7 +61,7 @@ abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
         )
     }
 
-     public func toJsonValueFunc(valueSource_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
+    public func toJsonValueFunc(valueSource_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
         var genericValueFuncName_TK = Tokens([Token(TokenKind.IDENTIFIER, "getVal_" + getContainerIdentifier())])
         var genericReceiver = varIdentifierName + "_val"
         var elementVar_Tk = Tokens([Token(TokenKind.IDENTIFIER, genericReceiver)])

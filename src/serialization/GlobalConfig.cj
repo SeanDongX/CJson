@@ -2,6 +2,9 @@ macro package serialization
 
 from std import collection.*
 
+/*
+* The global configuration
+*/
 class GlobalConfig {
     public let adaptorFactry = JsonAdaptorFactory()
     
@@ -23,6 +26,9 @@ class GlobalConfig {
         adaptorFactry.registrer("HashSet", HashSetAdaptor(adaptorFactry))
     }
 
+    /*
+    * Resets the configs for the next class instance, including usr defined var name mapping and ignored vars
+    */
     public func reset() {
         this.userDefinedVarMap.clear()
         this.ignoredVarSet.clear()

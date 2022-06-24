@@ -4,10 +4,13 @@ from std import ast.*
 from std import collection.*
 from encoding import json.*
 
-let globalConfig = GlobalConfig()
-
+/*
+* Macro for inserting json serialization/deserialization func onto target class
+* @param input_Tk the target class token
+* @return token the expaned token representation
+*/
 public macro JsonSerializable(input_Tk: Tokens): Tokens {    
-    let decl = verifyClassDecl(input_Tk, "JsonSerializable")
+    let decl = TokenVerifier.verifyClassDecl(input_Tk, Const.JSON_SERIALIZABLE_MACRO_NAME)
     
     let classModifier = decl.getModifiers()
     let classKeyWord = decl.getKeyword()
@@ -41,8 +44,8 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
 }
 
 func checkVars(classDecl_Tk: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {
-    let varVisitor = ClassMemeberDeclVisitor()
+    let varVisitor = ClassVarDeclVisitor()
     Walker.walk(classDecl_Tk, varVisitor)
-    globalConfig.defaultValueMap = varVisitor.getDefaultValueMap()
-    return varVisitor.getFieldInfo()
+    globalConfig.defaultValueMap = varVisitor.getDefaultVarValueMap()
+    return varVisitor.getVarTokenList()
 }

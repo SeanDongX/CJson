@@ -1,6 +1,13 @@
 macro package serialization
 
 class ClassJsonSerilizer <: ClassProcessor {
+    
+    /*
+    * Makes  toJsonObject() and toJson() func of target class
+    *
+    * @param var_Tk_List the list for memeber var token of the target class
+    * @return Tokens the toJsonObject() and toJson() func of target class represented in tokens
+    */
     public func makeToJsonFunc(var_Tk_List: ArrayList<NodeFormat_VarDecl>): Tokens {
         
         return quote(
@@ -29,7 +36,7 @@ class ClassJsonSerilizer <: ClassProcessor {
     }
 
     private func addFieldToMap(var_Tk: NodeFormat_VarDecl): Tokens {
-        let (identifier, name, typeName) = getFieldInfo(var_Tk)        
+        let (identifier, name, typeName) = getVarInfo(var_Tk)        
         var mappedNameValue = getMappedName(name)
 
         try {

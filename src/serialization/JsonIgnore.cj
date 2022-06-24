@@ -3,8 +3,13 @@ macro package serialization
 from std import ast.*
 from encoding import json.*
 
+/*
+* Macro for ignore the decorated var when doing json serialization/deserialization
+* @param input_Tk the target var
+* @return token the expaned token representation
+*/
 public macro JsonIgnore(input_Tk: Tokens): Tokens {
-    var decl = verifyVarDecl(input_Tk, "JsonIgnore")
+    var decl = TokenVerifier.verifyVarDecl(input_Tk, Const.JSON_IGNORE_MARCO_NAME)
     
     globalConfig.ignoredVarSet.put(decl.getIdentifier().value)
 

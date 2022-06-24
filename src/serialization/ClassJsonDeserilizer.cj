@@ -1,7 +1,18 @@
 macro package serialization
 
+/*
+* Serializer of json for target class
+*/
 class ClassJsonDeserilizer <: ClassProcessor {
-    public func makeFromJsonFunc(classIdentity_Tk: Token, filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+
+    /*
+    * Makes fromJson() func of target class
+    *
+    * @param classIdentity_Tk the Identifier token for target class
+    * @param var_Tk_List the list for memeber var token of the target class
+    * @return Tokens the fromJson() func of target class represented in tokens
+    */  
+    public func makeFromJsonFunc(classIdentity_Tk: Token, var_Tk_List: ArrayList<NodeFormat_VarDecl>): Tokens {
         
         var jsonOjbectToken = Token(TokenKind.IDENTIFIER, "jsonObject")
 
@@ -11,7 +22,7 @@ class ClassJsonDeserilizer <: ClassProcessor {
                 
                 var ret = $classIdentity_Tk()
 
-                $(parseJsonFields(filedInfoList, jsonOjbectToken))
+                $(parseJsonFields(var_Tk_List, jsonOjbectToken))
                 
                 return ret
             }
@@ -30,7 +41,7 @@ class ClassJsonDeserilizer <: ClassProcessor {
 
     private func parseJsonFiled(var_Tk: NodeFormat_VarDecl, jsonOjbectVar_Tk: Token): Tokens {
         //TODO: get type from getType() or init Func()
-        let (identifier, name, typeName) = getFieldInfo(var_Tk)
+        let (identifier, name, typeName) = getVarInfo(var_Tk)
         var mappedNameValue = getMappedName(name)
         
         var nodeJson_Tk = quote($jsonOjbectVar_Tk.get($mappedNameValue))

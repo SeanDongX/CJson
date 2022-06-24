@@ -3,8 +3,14 @@ macro package serialization
 from std import ast.*
 from encoding import json.*
 
+/*
+* Macro for custom json var name mapping
+* @param attr_Tk the given name for mapping
+* @param input_Tk the target var
+* @return token the expaned token representation
+*/
 public macro JsonName(attr_Tk: Tokens, input_Tk: Tokens): Tokens {
-    var decl = verifyVarDecl(input_Tk, "JsonAttribute")
+    var decl = TokenVerifier.verifyVarDecl(input_Tk, Const.JSON_NAME_MARCO_NAME)
     
     globalConfig.userDefinedVarMap.put(decl.getIdentifier().value, checkVarNameAttr(attr_Tk))
     
@@ -16,7 +22,7 @@ func checkVarNameAttr(attr_Tk: Tokens): String {
     if (token.kind == STRING_LITERAL) {
         return token.value
     } else {
-        throw Exception("JsonAttribute requies a string parameter at position 0, find ${token.kind} instead") 
+        throw MacroParameterException("JsonAttribute requies a string parameter at position 0, find ${token.kind} instead") 
     }
     
 }

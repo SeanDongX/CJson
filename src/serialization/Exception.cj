@@ -18,3 +18,8 @@ class MacroExpansionException <: Exception {
     }
 }
 
+class MacroParameterException <: Exception {
+    public init(message: String) {
+        super(message)
+    }
+}
