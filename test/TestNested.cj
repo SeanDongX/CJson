@@ -7,7 +7,7 @@ from std import io.*
 
 import serialization.*
 
-let NESTED_JSON = "{\"p1\": \"v1\",\"nested\": {\"c1\": 10}}"
+let NESTED_JSON = "{\"p1\":\"v1\",\"nested\":{\"c1\":10}}"
 
 @JsonSerializable
 class NestedChild {

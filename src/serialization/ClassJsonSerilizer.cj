@@ -2,14 +2,18 @@ macro package serialization
 
 class ClassJsonSerilizer <: ClassProcessor {
     public func makeToJsonFunc(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+        
         return quote(
-            public func toJson(): String {
+            public func toJsonObject(): JsonObject {
                 var map: HashMap<String, JsonValue> = HashMap()
 
                 $(composeMap(filedInfoList))
+                
+                return JsonObject(map)
+            }
 
-                return JsonObject(map).toString()
-
+            public func toJson(): String {
+                toJsonObject().toString()
             }
         )
     }
@@ -44,7 +48,7 @@ class ClassJsonSerilizer <: ClassProcessor {
 
         } catch(exp: AdaptorMissingException) {
             return quote(                    
-                map.put($mappedNameValue, JsonString(this.$identifier.toJson()))
+                map.put($mappedNameValue, this.$identifier.toJsonObject())
             )
             throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }
