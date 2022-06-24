@@ -7,6 +7,7 @@ class GlobalConfig {
     
     public let userDefinedVarMap : HashMap<String, String> = HashMap()
     public let ignoredVarSet: HashSet<String> = HashSet()
+    public var defaultValueMap: Map<String, NodeFormat_Expr> = HashMap()
     
     public init() {
         registerDefaultMap()

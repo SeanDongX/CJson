@@ -34,19 +34,17 @@ class ClassJsonDeserilizer <: ClassProcessor {
         var mappedNameValue = getMappedName(name)
         
         var nodeJson = quote($jsonOjbectVar.get($mappedNameValue))
-
+        var valueReveiverTK = quote(ret.$identifier)
         try {            
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
             adaptor.setType(fieldInfo.getType().getOrThrow())
-
-            var input = quote(ret.$identifier)
-            
-            return adaptor.fromJsonValue(quote(ret.$identifier), nodeJson, name)
+    
+            return adaptor.fromJsonValue(valueReveiverTK, nodeJson, name)
         } catch(exp: AdaptorMissingException) {
             //TODO: check if class is marked with JsonSerializable
             var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
             return quote(                    
-                ret.$identifier = $classNameToken.fromJson($nodeJson.toString())
+                $valueReveiverTK = $classNameToken.fromJson($nodeJson.toString())
             )
 
             //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")

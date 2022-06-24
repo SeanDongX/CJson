@@ -1,10 +1,22 @@
 macro package serialization
 
 class ClassMemeberDeclVisitor <: Visitor {
-    private var fileInfoList: ArrayList<NodeFormat_VarDecl> = ArrayList()
+    private var fieldInfoList: ArrayList<NodeFormat_VarDecl> = ArrayList()
+    private var defaultValueMap: Map<String, NodeFormat_Expr> = HashMap()
 
-    public func getFiledInfo(): ArrayList<NodeFormat_VarDecl> {
-        return fileInfoList
+    public func getFieldInfo(): ArrayList<NodeFormat_VarDecl> {
+        return fieldInfoList
+    }
+
+    public func getDefaultValueMap(): Map<String, NodeFormat_Expr> {
+        return defaultValueMap
+    }
+
+    private func setDefaultValue(varDecl: NodeFormat_VarDecl): Unit { 
+        match(varDecl.getInitializer()) {
+            case Some(v) => let _ = defaultValueMap.put(varDecl.getIdentifier().value, (v as NodeFormat_Expr).getOrThrow())
+            case None => ()
+        }
     }
 
     override public func visitDecl(decl: Decl): Bool {
@@ -16,7 +28,8 @@ class ClassMemeberDeclVisitor <: Visitor {
         if (decl.isVarDecl()) {
             var varDecl = decl.asVarDecl()
             if (!globalConfig.ignoredVarSet.contains(varDecl.getIdentifier().value)) {
-                fileInfoList.add(varDecl)
+                setDefaultValue(varDecl)
+                fieldInfoList.add(varDecl)
             }
             
         }

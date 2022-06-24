@@ -25,5 +25,3 @@ class TestCollection {
         @Assert(ClassWithCollction.fromJson(JSON_WITH_COLLECTION).toJson(), JSON_WITH_COLLECTION)
     }
 }
-
-main() {}

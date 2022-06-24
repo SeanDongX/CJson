@@ -32,13 +32,37 @@ open class Adaptor {
     public func getType(): NodeFormat_Type {
         return thisType.getOrThrow()
     }
+
+    protected func fromJsonValueCore(valueReceiver: Tokens, varIdentifierName: String, valueParse_Tk: Tokens): Tokens {
+        var defaultValueAssign_Tk = Tokens()
+        var hasDefaultValue = quote(false)
+
+        if (globalConfig.defaultValueMap.contains(varIdentifierName)) {
+            hasDefaultValue = quote(true)
+            defaultValueAssign_Tk = quote(
+                $valueReceiver = $(globalConfig.defaultValueMap.get(varIdentifierName).getOrThrow())
+            )
+        }
+
+        return quote(
+            $defaultValueAssign_Tk
+            try {
+                $valueParse_Tk
+            } catch(exp: Exception) {
+                //swollow exception if default value is assigned
+                if (!$hasDefaultValue) {
+                    throw exp
+                }
+            }
+        )
+    }
+    
 }
 
 class StringAdaptor <: Adaptor & JsonAdaptor {
     public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
-        return quote(
-           $valueReceiver = $jsonVar.asString().getOrThrow().getValue()
-        )
+        super.fromJsonValueCore(valueReceiver, varIdentifierName, 
+            quote($valueReceiver = $jsonVar.asString().getOrThrow().getValue()))
     }
     
     public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -52,9 +76,8 @@ class StringAdaptor <: Adaptor & JsonAdaptor {
 
 class BoolAdaptor <: Adaptor & JsonAdaptor {
     public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
-        return quote(
-           $valueReceiver = $jsonVar.asBool().getOrThrow().getValue()
-        )
+        super.fromJsonValueCore(valueReceiver, varIdentifierName, 
+            quote($valueReceiver = $jsonVar.asBool().getOrThrow().getValue()))
     }
     
     public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -68,9 +91,8 @@ class BoolAdaptor <: Adaptor & JsonAdaptor {
 
 class IntAdaptor <: Adaptor & JsonAdaptor {
     public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
-        return quote(
-           $valueReceiver = $jsonVar.asInt().getOrThrow().getValue()
-        )
+        super.fromJsonValueCore(valueReceiver, varIdentifierName, 
+            quote($valueReceiver = $jsonVar.asInt().getOrThrow().getValue()))
     }
 
     public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -83,11 +105,9 @@ class IntAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class FloatAdaptor <: Adaptor & JsonAdaptor {
-
     public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
-        return quote(
-           $valueReceiver = $jsonVar.asFloat().getOrThrow().getValue()
-        )
+        super.fromJsonValueCore(valueReceiver, varIdentifierName, 
+            quote($valueReceiver = $jsonVar.asFloat().getOrThrow().getValue()))
     }
 
     public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {

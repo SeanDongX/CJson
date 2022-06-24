@@ -43,5 +43,6 @@ public macro JsonSerializable(input: Tokens): Tokens {
 func checkVars(classDecl: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {
     let varVisitor = ClassMemeberDeclVisitor()
     Walker.walk(classDecl, varVisitor)
-    return varVisitor.getFiledInfo()
+    globalConfig.defaultValueMap = varVisitor.getDefaultValueMap()
+    return varVisitor.getFieldInfo()
 }
