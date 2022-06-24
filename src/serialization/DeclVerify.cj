@@ -2,8 +2,8 @@ macro package serialization
 
 from std import ast.*
 
-func verifyClassDecl(input: Tokens, marcoName: String): NodeFormat_ClassDecl {
-    var decl = ParseDecl(input)
+func verifyClassDecl(input_Tk: Tokens, marcoName: String): NodeFormat_ClassDecl {
+    var decl = ParseDecl(input_Tk)
 
     if (!decl.isClassDecl()) {
         throw Exception("${marcoName} is noly allow for class")
@@ -13,8 +13,8 @@ func verifyClassDecl(input: Tokens, marcoName: String): NodeFormat_ClassDecl {
 }
 
 
-func verifyVarDecl(input: Tokens, marcoName: String): NodeFormat_VarDecl {
-    var decl = ParseDecl(input)
+func verifyVarDecl(input_Tk: Tokens, marcoName: String): NodeFormat_VarDecl {
+    var decl = ParseDecl(input_Tk)
 
     if (!decl.isVarDecl()) {
         throw Exception("${marcoName} is noly allow for class level vars")

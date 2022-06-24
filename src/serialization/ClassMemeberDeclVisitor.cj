@@ -12,9 +12,9 @@ class ClassMemeberDeclVisitor <: Visitor {
         return defaultValueMap
     }
 
-    private func setDefaultValue(varDecl: NodeFormat_VarDecl): Unit { 
-        match(varDecl.getInitializer()) {
-            case Some(v) => let _ = defaultValueMap.put(varDecl.getIdentifier().value, (v as NodeFormat_Expr).getOrThrow())
+    private func setDefaultValue(varDecl_Tk: NodeFormat_VarDecl): Unit { 
+        match(varDecl_Tk.getInitializer()) {
+            case Some(v) => let _ = defaultValueMap.put(varDecl_Tk.getIdentifier().value, (v as NodeFormat_Expr).getOrThrow())
             case None => ()
         }
     }

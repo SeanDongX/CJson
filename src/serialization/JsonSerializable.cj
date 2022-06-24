@@ -6,8 +6,8 @@ from encoding import json.*
 
 let globalConfig = GlobalConfig()
 
-public macro JsonSerializable(input: Tokens): Tokens {    
-    let decl = verifyClassDecl(input, "JsonSerializable")
+public macro JsonSerializable(input_Tk: Tokens): Tokens {    
+    let decl = verifyClassDecl(input_Tk, "JsonSerializable")
     
     let classModifier = decl.getModifiers()
     let classKeyWord = decl.getKeyword()
@@ -40,9 +40,9 @@ public macro JsonSerializable(input: Tokens): Tokens {
     }
 }
 
-func checkVars(classDecl: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {
+func checkVars(classDecl_Tk: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {
     let varVisitor = ClassMemeberDeclVisitor()
-    Walker.walk(classDecl, varVisitor)
+    Walker.walk(classDecl_Tk, varVisitor)
     globalConfig.defaultValueMap = varVisitor.getDefaultValueMap()
     return varVisitor.getFieldInfo()
 }
