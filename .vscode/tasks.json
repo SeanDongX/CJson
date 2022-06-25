@@ -17,8 +17,7 @@
         {
             "label": "coverage",
             "type": "shell",
-            "command": "cjcov && echo '📈 please open ./index.html to see coverage'",
-            "dependsOn":["test"],
+            "command": "cpm test test --coverage && cjcov && echo '📈 please open ./index.html to see coverage'",
             "problemMatcher": []            
         },
         {
