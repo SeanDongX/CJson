@@ -36,9 +36,9 @@
             "problemMatcher": []
         },
         {
-            "label": "clean debug marco",
+            "label": "clean marco debug output",
             "type": "shell",
-            "command": "rm ./test/debug_TestSerialization.cj",
+            "command": "rm ./test/debug_*.cj",
             "problemMatcher": []
         }
     ],
