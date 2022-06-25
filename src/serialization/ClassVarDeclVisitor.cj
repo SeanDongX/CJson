@@ -1,9 +1,11 @@
-macro package serialization
+package serialization
+
+from std import ast.*
 
 /*
 *  The visitor for class-level vars for target class
 */
-class ClassVarDeclVisitor <: Visitor {
+public class ClassVarDeclVisitor <: Visitor {
     private var var_Tk_List: ArrayList<NodeFormat_VarDecl> = ArrayList()
     private var defaultVarValueMap: Map<String, NodeFormat_Expr> = HashMap()
 

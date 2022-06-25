@@ -1,9 +1,9 @@
-macro package serialization
+package serialization
 
 /*
 * Processor for decorated class
 */
-open class ClassProcessor {
+public open class ClassProcessor {
 
     /*
     * Gets information from var token

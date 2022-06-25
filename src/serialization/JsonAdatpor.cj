@@ -1,9 +1,9 @@
-macro package serialization
+package serialization
 
 /*
 * Interface for json adaptor
 */
-interface JsonAdaptor {
+public interface JsonAdaptor {
     
     /*
     * Sets the type of the adaptor

@@ -1,9 +1,9 @@
-macro package serialization
+package serialization
 
 /*
 * The factory for json adaptors
 */
-class JsonAdaptorFactory {
+public class JsonAdaptorFactory {
     private let map: HashMap<String, JsonAdaptor> = HashMap()
     
     /*

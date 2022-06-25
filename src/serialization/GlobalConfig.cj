@@ -1,11 +1,11 @@
-macro package serialization
+package serialization
 
 from std import collection.*
 
 /*
 * The global configuration
 */
-class GlobalConfig {
+public class GlobalConfig {
     public let adaptorFactry = JsonAdaptorFactory()
     
     public let userDefinedVarMap : HashMap<String, String> = HashMap()

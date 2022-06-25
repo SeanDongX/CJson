@@ -1,24 +1,30 @@
-macro package serialization
+package serialization
 
-class AdaptorMissingException <: Exception {
+public class AdaptorMissingException <: Exception {
     public init(message: String) {
         super(message)
     }
 }
 
-class TypeInferrenceException <: Exception {
+public class TypeInferrenceException <: Exception {
     public init(message: String) {
         super(message)
     }
 }
 
-class MacroExpansionException <: Exception {
+public class TokenVerificationException <: Exception {
     public init(message: String) {
         super(message)
     }
 }
 
-class MacroParameterException <: Exception {
+public class MacroExpansionException <: Exception {
+    public init(message: String) {
+        super(message)
+    }
+}
+
+public class MacroParameterException <: Exception {
     public init(message: String) {
         super(message)
     }

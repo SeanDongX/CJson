@@ -1,4 +1,4 @@
-macro package serialization
+package serialization
 
 extend NodeFormat_Type {
 

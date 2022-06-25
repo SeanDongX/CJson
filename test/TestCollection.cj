@@ -5,7 +5,7 @@ from encoding import json.*
 from std import collection.*
 from std import io.*
 
-import serialization.*
+import jsonmacro.*
 
 let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[[\"8\"],[\"7\"],[\"999\",\"25\"]],\"set\":[\"v1\",\"v2\"]}"
 

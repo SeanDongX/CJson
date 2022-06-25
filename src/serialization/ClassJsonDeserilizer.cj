@@ -1,9 +1,12 @@
-macro package serialization
+package serialization
+
+//TODO:decalare in macros and use instance in this package
+public let globalConfig = GlobalConfig()
 
 /*
 * Serializer of json for target class
 */
-class ClassJsonDeserilizer <: ClassProcessor {
+public class ClassJsonDeserilizer <: ClassProcessor {
 
     /*
     * Makes fromJson() func of target class

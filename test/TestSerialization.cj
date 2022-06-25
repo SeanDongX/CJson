@@ -5,7 +5,7 @@ from encoding import json.*
 from std import collection.*
 from std import io.*
 
-import serialization.*
+import jsonmacro.*
 
 let MYCLASS_JSON = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
 let MYCLASS_JSON_WITH_IGNORE = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09, \"ignored\": \"IgnoredValue\"}"

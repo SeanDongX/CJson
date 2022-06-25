@@ -1,6 +1,6 @@
-macro package serialization
+package serialization
 
-class ClassJsonSerilizer <: ClassProcessor {
+public class ClassJsonSerilizer <: ClassProcessor {
     
     /*
     * Makes  toJsonObject() and toJson() func of target class

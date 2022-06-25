@@ -4,7 +4,7 @@ from std import unittest.testmacro.*
 from encoding import json.*
 from std import collection.*
 
-import serialization.*
+import jsonmacro.*
 
 let DEFAULT_VALUE_JSON = "{\"p0\":0}"
 let DEFAULT_TOJSON = "{\"p0\":0,\"p1\":\"v1\",\"p2\":99,\"p3\":false,\"p4\":10.990000}"

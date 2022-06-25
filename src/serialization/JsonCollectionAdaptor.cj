@@ -1,4 +1,4 @@
-macro package serialization
+package serialization
 
 /*
 * Core implementation of JsonAdaptor for collections

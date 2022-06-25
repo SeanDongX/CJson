@@ -1,8 +1,10 @@
-macro package serialization
+macro package jsonmacro
 
 from std import ast.*
 from std import collection.*
 from encoding import json.*
+
+import serialization.*
 
 /*
 * Macro for inserting json serialization/deserialization func onto target class

@@ -7,6 +7,6 @@
   "requires": {},
   "package_requires": {},
   "foreign_requires": {},
-  "output_type": "dynamic",
+  "output_type": "static",
   "command_option": ""
 }

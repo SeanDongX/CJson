@@ -5,7 +5,7 @@ from encoding import json.*
 from std import collection.*
 from std import io.*
 
-import serialization.*
+import jsonmacro.*
 
 let NESTED_JSON = "{\"p1\":\"v1\",\"nested\":{\"c1\":10}}"
 

@@ -1,6 +1,6 @@
-macro package serialization
+macro package jsonmacro
 
-let globalConfig = GlobalConfig()
+// public let globalConfig = GlobalConfig()
 
 class Const {
     static let JSON_SERIALIZABLE_MACRO_NAME = "JsonSerializable"
