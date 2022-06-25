@@ -4,6 +4,11 @@ package serialization
 * Processor for decorated class
 */
 public open class ClassProcessor {
+    protected var globalConfig: GlobalConfig
+
+    public init(globalConfig: GlobalConfig) {
+        this.globalConfig = globalConfig
+    }
 
     /*
     * Gets information from var token

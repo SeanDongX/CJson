@@ -21,9 +21,9 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
     let superTypes = decl.getSuperTypes()
 
     try {
-        let varDeclList = checkVars(decl)
-        let fromJsonFunc = ClassJsonDeserilizer().makeFromJsonFunc(classIdent, varDeclList)
-        let toJsonFunc = ClassJsonSerilizer().makeToJsonFunc(varDeclList)
+        let varDeclList = checkVars(decl, globalConfig)
+        let fromJsonFunc = ClassJsonDeserilizer(globalConfig).makeFromJsonFunc(classIdent, varDeclList)
+        let toJsonFunc = ClassJsonSerilizer(globalConfig).makeToJsonFunc(varDeclList)
 
         //reset global config next class
         globalConfig.reset()
@@ -45,8 +45,9 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
     }
 }
 
-func checkVars(classDecl_Tk: NodeFormat_ClassDecl): ArrayList<NodeFormat_VarDecl> {
-    let varVisitor = ClassVarDeclVisitor()
+
+func checkVars(classDecl_Tk: NodeFormat_ClassDecl, globalConfig: GlobalConfig): ArrayList<NodeFormat_VarDecl> {
+    let varVisitor = ClassVarDeclVisitor(globalConfig)
     Walker.walk(classDecl_Tk, varVisitor)
     globalConfig.defaultValueMap = varVisitor.getDefaultVarValueMap()
     return varVisitor.getVarTokenList()

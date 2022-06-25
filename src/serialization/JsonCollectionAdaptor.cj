@@ -6,7 +6,8 @@ package serialization
 abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
     private var adaptorFactory: JsonAdaptorFactory
     
-    public init(adaptorFactory: JsonAdaptorFactory) {
+    public init(globalConfig: GlobalConfig, adaptorFactory: JsonAdaptorFactory) {
+        super(globalConfig)
         this.adaptorFactory = adaptorFactory
     }
 
@@ -92,10 +93,10 @@ abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
 }
 
 class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
-    public init(adaptorFactory: JsonAdaptorFactory) {
-        super(adaptorFactory)
+    public init(globalConfig: GlobalConfig, adaptorFactory: JsonAdaptorFactory) {
+        super(globalConfig, adaptorFactory)
     }
-
+    
     protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens {
         return quote(
             $valueReceiver_Tk.add($genericVar_Tk)
@@ -104,8 +105,8 @@ class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
 }
 
 class HashSetAdaptor <: JsonCollectionAdaptorImpl {
-    public init(adaptorFactory: JsonAdaptorFactory) {
-        super(adaptorFactory)
+    public init(globalConfig: GlobalConfig, adaptorFactory: JsonAdaptorFactory) {
+        super(globalConfig, adaptorFactory)
     }
     
     protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens {

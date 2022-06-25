@@ -9,6 +9,12 @@ public class ClassVarDeclVisitor <: Visitor {
     private var var_Tk_List: ArrayList<NodeFormat_VarDecl> = ArrayList()
     private var defaultVarValueMap: Map<String, NodeFormat_Expr> = HashMap()
 
+    private var globalConfig: GlobalConfig
+
+    public init(globalConfig: GlobalConfig) {
+        this.globalConfig = globalConfig
+    }
+
     /*
     * Gets the class level var token list
     *

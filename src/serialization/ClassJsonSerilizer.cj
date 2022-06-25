@@ -2,6 +2,10 @@ package serialization
 
 public class ClassJsonSerilizer <: ClassProcessor {
     
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+    
     /*
     * Makes  toJsonObject() and toJson() func of target class
     *

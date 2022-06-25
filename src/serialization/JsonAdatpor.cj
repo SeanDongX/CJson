@@ -42,7 +42,13 @@ public interface JsonAdaptor {
 
 open class Adaptor {
     protected var thisType: Option<NodeFormat_Type> = None
+    protected var globalConfig: GlobalConfig
 
+    public init(globalConfig: GlobalConfig) {
+        this.globalConfig = globalConfig
+    }
+
+    
     public func setType(thisType: NodeFormat_Type) {
        this.thisType = thisType
     }
@@ -85,6 +91,10 @@ open class Adaptor {
 }
 
 class StringAdaptor <: Adaptor & JsonAdaptor {
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+
     public func fromJsonValue(valueReceiver_TK: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
         super.fromJsonValueCore(valueReceiver_TK, varIdentifierName, 
             quote($valueReceiver_TK = $jsonVar_Tk.asString().getOrThrow().getValue()))
@@ -100,6 +110,10 @@ class StringAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class BoolAdaptor <: Adaptor & JsonAdaptor {
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+
     public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
         super.fromJsonValueCore(valueReceiver_Tk, varIdentifierName, 
             quote($valueReceiver_Tk = $jsonVar_Tk.asBool().getOrThrow().getValue()))
@@ -115,6 +129,10 @@ class BoolAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class IntAdaptor <: Adaptor & JsonAdaptor {
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+    
     public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
         super.fromJsonValueCore(valueReceiver_Tk, varIdentifierName, 
             quote($valueReceiver_Tk = $jsonVar_Tk.asInt().getOrThrow().getValue()))
@@ -130,6 +148,10 @@ class IntAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class FloatAdaptor <: Adaptor & JsonAdaptor {
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+    
     public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
         super.fromJsonValueCore(valueReceiver_Tk, varIdentifierName, 
             quote($valueReceiver_Tk = $jsonVar_Tk.asFloat().getOrThrow().getValue()))
