@@ -32,7 +32,7 @@
         {
             "label": "debug marco",
             "type": "shell",
-            "command": "cjc ./src/serialization/*.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./test/TestSerialization.cj",
+            "command": "cjc ./src/serialization/*.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ${input:pickMarcoTarget}",
             "problemMatcher": []
         },
         {
@@ -41,5 +41,13 @@
             "command": "rm ./test/debug_TestSerialization.cj",
             "problemMatcher": []
         }
-    ]
+    ],
+    "inputs": [
+        {
+            "id": "pickMarcoTarget",
+            "type": "promptString"
+            "description": "marco target"
+            "default": "./test/TestCollection.cj"          
+        }
+      ]
 }
