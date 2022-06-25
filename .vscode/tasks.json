@@ -15,9 +15,18 @@
             "problemMatcher": []
         },
         {
+            "label": "coverage",
+            "type": "shell",
+            "command": "cjcov && echo '📈 please open ./index.html to see coverage'",
+            "dependsOn":["test"],
+            "problemMatcher": []            
+        },
+        {
             "label": "build & test",
             "type": "shell",
-            "command": "cpm build && cpm test test",
+            "command": "",
+            "dependsOrder": "sequence"
+            "dependsOn":["build", "test"]
             "problemMatcher": []
         },
         {
