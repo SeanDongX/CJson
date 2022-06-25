@@ -3,6 +3,7 @@
 *.o
 *.so
 *.a
+
 out/
 build/
 bin/
@@ -13,3 +14,8 @@ log.*.txt
 
 .vscode/settings.json
 module-resolve.json
+
+#coverage
+*.gcda
+*.gcno
+/index.html
