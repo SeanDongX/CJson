@@ -31,7 +31,7 @@
         {
             "label": "debug marco",
             "type": "shell",
-            "command": "cjc ./src/serialization/*.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ${input:pickMarcoTarget}",
+            "command": "cjc -debug-macro --macro-lib=./build/cjson/libcjson_jsonmacro.so ${input:pickMarcoTarget}",
             "problemMatcher": []
         },
         {
