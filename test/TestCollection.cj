@@ -7,8 +7,6 @@ from std import io.*
 
 import jsonmacro.*
 
-let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[[\"8\"],[\"7\"],[\"999\",\"25\"]],\"set\":[\"v1\",\"v2\"]}"
-
 @JsonSerializable
 class ClassWithCollction {
     public var p1: String = "v1"
@@ -20,6 +18,8 @@ class ClassWithCollction {
 
 @Test
 class TestCollection {
+    private let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[[\"8\"],[\"7\"],[\"999\",\"25\"]],\"set\":[\"v1\",\"v2\"]}"
+
     @TestCase
     func testToJson(): Unit {        
         @Assert(ClassWithCollction.fromJson(JSON_WITH_COLLECTION).toJson(), JSON_WITH_COLLECTION)

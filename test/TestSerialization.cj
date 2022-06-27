@@ -7,10 +7,6 @@ from std import io.*
 
 import jsonmacro.*
 
-let MYCLASS_JSON = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
-let MYCLASS_JSON_WITH_IGNORE = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09, \"ignored\": \"IgnoredValue\"}"
-let MYNEWCLASS_JSON = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
-
 interface MyInterface {
     func rotate(): Unit
 }
@@ -31,10 +27,6 @@ class MyClass <: BaseClass & MyInterface {
     public var intVar: Int64 = 10
     public var boolVar: Bool = false
     public var floatVar: Float64 = 99.01
-
-
-    @JsonIgnore
-    public var ignored: String = "OriginalValue"
 
     public init() {
         this.stringVar2 = "stringVar2+"
@@ -69,7 +61,9 @@ class MyNewClass <: BaseClass & MyInterface {
 
 @Test
 public class TestSerialization {
-    
+    private let MYCLASS_JSON = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
+    private let MYNEWCLASS_JSON = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
+
     @TestCase
     func testFromJson(): Unit {
         var myClass = MyClass()
@@ -105,20 +99,6 @@ public class TestSerialization {
         map.put("floatVar", JsonFloat(myClass.floatVar))
 
         @Assert(JsonObject(map).toString(), myClass.toJson())
-    }
-
-    @TestCase
-    func testIgnore(): Unit {
-        var myClass = MyClass()
-        myClass.stringVar1 = "String1"
-        myClass.stringVar2 = "String2"
-        myClass.intVar = 10
-        myClass.ignored = "SomeValue"
-        
-        @Assert(!myClass.toJson().contains("ignored"), true)
-        @Assert(MyClass.fromJson(MYCLASS_JSON).ignored, "OriginalValue")
-        @Assert(MyClass.fromJson(MYCLASS_JSON_WITH_IGNORE).ignored, "OriginalValue")
-
     }
 
     @TestCase

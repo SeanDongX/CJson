@@ -7,7 +7,6 @@ from std import io.*
 
 import jsonmacro.*
 
-let NESTED_JSON = "{\"p1\":\"v1\",\"nested\":{\"c1\":10}}"
 
 @JsonSerializable
 class NestedChild {
@@ -22,7 +21,8 @@ class NestedParent {
 
 @Test
 public class TestNested {
-    
+    private let NESTED_JSON = "{\"p1\":\"v1\",\"nested\":{\"c1\":10}}"
+
     @TestCase
     func testNestedFromJson(): Unit {
         var parent = NestedParent()

@@ -6,9 +6,6 @@ from std import collection.*
 
 import jsonmacro.*
 
-let DEFAULT_VALUE_JSON = "{\"p0\":0}"
-let DEFAULT_TOJSON = "{\"p0\":0,\"p1\":\"v1\",\"p2\":99,\"p3\":false,\"p4\":10.990000}"
-
 @JsonSerializable
 class DefaultValueClass {
     public var p0: Int64 = 0
@@ -20,6 +17,8 @@ class DefaultValueClass {
 
 @Test
 public class TestDefaultValue {
+    private let DEFAULT_VALUE_JSON = "{\"p0\":0}"
+    private let DEFAULT_TOJSON = "{\"p0\":0,\"p1\":\"v1\",\"p2\":99,\"p3\":false,\"p4\":10.990000}"
     
     @TestCase
     func testFromJson(): Unit {
