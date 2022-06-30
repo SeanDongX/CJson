@@ -31,7 +31,7 @@
         {
             "label": "debug marco",
             "type": "shell",
-            "command": "cjc -debug-macro --macro-lib=./build/cjson/libcjson_jsonmacro.so ${input:pickMarcoTarget}",
+            "command": "export CANGJIE_PATH=build/:$CANGJIE_PATH && cjc -debug-macro --module-name cjson --macro-lib=./build/cjson/libcjson_jsonmacro.so ${input:pickMarcoTarget}",
             "problemMatcher": []
         },
         {
