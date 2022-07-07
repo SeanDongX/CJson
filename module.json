@@ -1,8 +1,8 @@
 {
   "cjc_version": "0.29.1",
-  "organization": "test",
+  "organization": "SeanXDO",
   "name": "cjson",
-  "description": "nothing here",
+  "description": "the library for json serialization/deserialization",
   "version": "1.0.0",
   "requires": {},
   "package_requires": {},

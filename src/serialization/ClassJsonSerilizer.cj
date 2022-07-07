@@ -1,36 +1,51 @@
-macro package serialization
+package serialization
 
-class ClassJsonSerilizer <: ClassProcessor {
-    public func makeToJsonFunc(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+public class ClassJsonSerilizer <: ClassProcessor {
+    
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+    
+    /*
+    * Makes  toJsonObject() and toJson() func of target class
+    *
+    * @param var_Tk_List the list for memeber var token of the target class
+    * @return Tokens the toJsonObject() and toJson() func of target class represented in tokens
+    */
+    public func makeToJsonFunc(var_Tk_List: ArrayList<NodeFormat_VarDecl>): Tokens {
+        
         return quote(
-            public func toJson(): String {
+            public func toJsonObject(): JsonObject {
                 var map: HashMap<String, JsonValue> = HashMap()
 
-                $(composeMap(filedInfoList))
+                $(composeMap(var_Tk_List))
+                
+                return JsonObject(map)
+            }
 
-                return JsonObject(map).toString()
-
+            public func toJson(): String {
+                toJsonObject().toString()
             }
         )
     }
 
-    private func composeMap(filedInfoList: ArrayList<NodeFormat_VarDecl>): Tokens {
+    private func composeMap(var_Tk_List: ArrayList<NodeFormat_VarDecl>): Tokens {
         var fieldMapToken = Tokens()
         
-        for(fieldInfo in filedInfoList) {
-            fieldMapToken = fieldMapToken + addFieldToMap(fieldInfo)   
+        for(var_Tk in var_Tk_List) {
+            fieldMapToken = fieldMapToken + addFieldToMap(var_Tk)   
         }
 
         return fieldMapToken
     }
 
-    private func addFieldToMap(fieldInfo: NodeFormat_VarDecl): Tokens {
-        let (identifier, name, typeName) = getFieldInfo(fieldInfo)        
+    private func addFieldToMap(var_Tk: NodeFormat_VarDecl): Tokens {
+        let (identifier, name, typeName) = getVarInfo(var_Tk)        
         var mappedNameValue = getMappedName(name)
 
         try {
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
-            adaptor.setType(fieldInfo.getType().getOrThrow())
+            adaptor.setType(var_Tk.getType().getOrThrow())
         
             var jsonValueFuncName_Tk = Tokens([Token(TokenKind.IDENTIFIER, "getValue_" + identifier.value)])
             var jsonValueFunc_Tk = adaptor.toJsonValueFunc(quote(this.$identifier), jsonValueFuncName_Tk, identifier.value)
@@ -44,7 +59,7 @@ class ClassJsonSerilizer <: ClassProcessor {
 
         } catch(exp: AdaptorMissingException) {
             return quote(                    
-                map.put($mappedNameValue, JsonString(this.$identifier.toJson()))
+                map.put($mappedNameValue, this.$identifier.toJsonObject())
             )
             throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }

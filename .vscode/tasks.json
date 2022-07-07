@@ -15,22 +15,38 @@
             "problemMatcher": []
         },
         {
+            "label": "coverage",
+            "type": "shell",
+            "command": "cpm test test --coverage && cjcov && echo '📈 please open ./index.html to see coverage'",
+            "problemMatcher": []            
+        },
+        {
             "label": "build & test",
             "type": "shell",
-            "command": "cpm build && cpm test test",
+            "command": "",
+            "dependsOrder": "sequence"
+            "dependsOn":["build", "test"]
             "problemMatcher": []
         },
         {
             "label": "debug marco",
             "type": "shell",
-            "command": "cjc ./src/serialization/*.cj --output-type=dylib -o m.so && cjc -debug-macro --macro-lib=./m.so ./test/TestSerialization.cj",
+            "command": "export CANGJIE_PATH=build/:$CANGJIE_PATH && cjc -debug-macro --module-name cjson --macro-lib=./build/cjson/libcjson_jsonmacro.so ${input:pickMarcoTarget}",
             "problemMatcher": []
         },
         {
-            "label": "clean debug marco",
+            "label": "clean marco debug output",
             "type": "shell",
-            "command": "rm ./test/debug_TestSerialization.cj",
+            "command": "rm ./test/debug_*.cj",
             "problemMatcher": []
         }
-    ]
+    ],
+    "inputs": [
+        {
+            "id": "pickMarcoTarget",
+            "type": "promptString"
+            "description": "marco target"
+            "default": "./test/TestCollection.cj"          
+        }
+      ]
 }

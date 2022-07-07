@@ -1,6 +1,12 @@
-macro package serialization
+package serialization
 
 extend NodeFormat_Type {
+
+    /*
+    * Gets the type name
+    *
+    * @return String the name of the type
+    */
     public func getTypeName(): String {
         try {
 
@@ -12,5 +18,27 @@ extend NodeFormat_Type {
         } catch (exp: NoneValueException) {
             throw Exception("Error when try to get type name")
         }
+    }
+}
+
+extend NodeFormat_VarDecl {
+
+    /*
+     * Get info from VarDecl
+     *
+     * @return (Token, String, String) the identifier, name, type name of the var
+     */
+    public func getVarInfo(): (Token, String, String) {
+        let identifier = this.getIdentifier()
+        let name = identifier.value
+        var typeName: String
+
+        try {
+            typeName = this.getType().getOrThrow().getTypeName()
+        } catch (exp: NoneValueException) {
+            throw TypeInferrenceException("Field ${name} must be declared with a specific type instead of using a inferred type")
+        }
+        
+        return (identifier, name, typeName)
     }
 }

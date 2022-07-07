@@ -1,30 +1,35 @@
-macro package serialization
+package serialization
 
-open class ClassProcessor {
-    protected func getFieldInfo(fieldInfo: NodeFormat_VarDecl): (Token, String, String) {
-        let identifier = fieldInfo.getIdentifier()
-        let name = identifier.value
-        var typeName: String
+/*
+* Processor for decorated class
+*/
+public open class ClassProcessor {
+    protected var globalConfig: GlobalConfig
 
-        try {
-            typeName = fieldInfo.getType().getOrThrow().getTypeName()
-        } catch (exp: NoneValueException) {
-            throw TypeInferrenceException("Field ${name} must be declared with a specific type instead of using a inferred type")
-        }
-        
-        return (identifier, name, typeName)
+    public init(globalConfig: GlobalConfig) {
+        this.globalConfig = globalConfig
     }
 
-    protected func getMappedName(name: String): String {
-        var mappedNameValue = name
-        if (globalConfig.userDefinedVarMap.contains(name)) {
-            mappedNameValue = globalConfig.userDefinedVarMap.get(name).getOrThrow()
+    /*
+    * Gets information from var token
+    * @param vark_Tk the var token to get information from
+    * @return (Token, String, String) the identifier, name, type name of the var
+    */
+    protected func getVarInfo(vark_Tk: NodeFormat_VarDecl): (Token, String, String) {
+        return vark_Tk.getVarInfo()
+    }
+
+    /*
+    * Gets mapped name for given var name from user defined name mapping by @JsonName macro
+    * @param varName to get mapped name for
+    * @return String the mapped name 
+    */
+    protected func getMappedName(varName: String): String {
+        var mappedNameValue = varName
+        if (globalConfig.userDefinedVarMap.contains(varName)) {
+            mappedNameValue = globalConfig.userDefinedVarMap.get(varName).getOrThrow()
         }
         
         return mappedNameValue
-    }
-
-    protected func getFromJson() {
-        
     }
 }

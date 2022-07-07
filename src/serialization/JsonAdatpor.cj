@@ -1,14 +1,25 @@
-macro package serialization
+package serialization
 
-interface JsonAdaptor {
+/*
+* Interface for json adaptor
+*/
+public interface JsonAdaptor {
     
+    /*
+    * Sets the type of the adaptor
+    * @param thisType the type token for the identifier, the token is used
+    * for later operations when doing serializationd and deserialization
+    */
     func setType(thisType: NodeFormat_Type): Unit
 
     /*
-    / Composes an expression with jsonValue as input for deserialization
-    / for example: quote($valueReceiver = $jsonValueToken.asString().getOrThrow().getValue())
+    * Makes token representation for deserializing the given json to pass it on to the receiver
+    * @param valueReceiver_TK the receiver for the deserialized value
+    * @param jsonVar_Tk the var that holds the source json value
+    * @param varIdentifierName the identifier name of the receiver, using for internal namespaing
+    * @return Tokens the token representation 
     */
-    func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens
+    func fromJsonValue(valueReceiver_TK: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens
     
     /*
     / Composes a func for serialization of the valueVar, this func can be invoked later with funcName_Tk()
@@ -19,12 +30,25 @@ interface JsonAdaptor {
     /       }
     /   )
     */
+    /*
+    * Makes token representation for serializing the given value to json
+    * @param valueVar_Tk the source of the value
+    * @param funcName_Tk the predefined func name for serialization, to be used later as refence for func call
+    * @param varIdentifierName the identifier name of the receiver, using for internal namespaing
+    * @return Tokens the token representation 
+    */
     func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens
 }
 
 open class Adaptor {
     protected var thisType: Option<NodeFormat_Type> = None
+    protected var globalConfig: GlobalConfig
 
+    public init(globalConfig: GlobalConfig) {
+        this.globalConfig = globalConfig
+    }
+
+    
     public func setType(thisType: NodeFormat_Type) {
        this.thisType = thisType
     }
@@ -32,13 +56,48 @@ open class Adaptor {
     public func getType(): NodeFormat_Type {
         return thisType.getOrThrow()
     }
+
+    /*
+    * The core operation for interface fromJsonValue func
+    * @param valueReceiver_TK the receiver for the deserialized value
+    * @param varIdentifierName the identifier name of the receiver, using for internal namespaing
+    * @param valueParse_Tk the token repsenetation for value parsing operations
+    * @return Tokens the token representation 
+    */
+    protected func fromJsonValueCore(valueReceiver_TK: Tokens, varIdentifierName: String, valueParse_Tk: Tokens): Tokens {
+        var defaultValueAssign_Tk = Tokens()
+        var hasDefaultValue = quote(false)
+
+        if (globalConfig.defaultValueMap.contains(varIdentifierName)) {
+            hasDefaultValue = quote(true)
+            defaultValueAssign_Tk = quote(
+                $valueReceiver_TK = $(globalConfig.defaultValueMap.get(varIdentifierName).getOrThrow())
+            )
+        }
+
+        return quote(
+            $defaultValueAssign_Tk
+            try {
+                $valueParse_Tk
+            } catch(exp: Exception) {
+                //swollow exception if default value is assigned
+                if (!$hasDefaultValue) {
+                    throw exp
+                }
+            }
+        )
+    }
+    
 }
 
 class StringAdaptor <: Adaptor & JsonAdaptor {
-    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
-        return quote(
-           $valueReceiver = $jsonVar.asString().getOrThrow().getValue()
-        )
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+
+    public func fromJsonValue(valueReceiver_TK: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
+        super.fromJsonValueCore(valueReceiver_TK, varIdentifierName, 
+            quote($valueReceiver_TK = $jsonVar_Tk.asString().getOrThrow().getValue()))
     }
     
     public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -51,10 +110,13 @@ class StringAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class BoolAdaptor <: Adaptor & JsonAdaptor {
-    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
-        return quote(
-           $valueReceiver = $jsonVar.asBool().getOrThrow().getValue()
-        )
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+
+    public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
+        super.fromJsonValueCore(valueReceiver_Tk, varIdentifierName, 
+            quote($valueReceiver_Tk = $jsonVar_Tk.asBool().getOrThrow().getValue()))
     }
     
     public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -67,10 +129,13 @@ class BoolAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class IntAdaptor <: Adaptor & JsonAdaptor {
-    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
-        return quote(
-           $valueReceiver = $jsonVar.asInt().getOrThrow().getValue()
-        )
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+    
+    public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
+        super.fromJsonValueCore(valueReceiver_Tk, varIdentifierName, 
+            quote($valueReceiver_Tk = $jsonVar_Tk.asInt().getOrThrow().getValue()))
     }
 
     public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -83,11 +148,13 @@ class IntAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class FloatAdaptor <: Adaptor & JsonAdaptor {
-
-    public func fromJsonValue(valueReceiver: Tokens, jsonVar: Tokens, varIdentifierName: String): Tokens {
-        return quote(
-           $valueReceiver = $jsonVar.asFloat().getOrThrow().getValue()
-        )
+    public init(globalConfig: GlobalConfig) {
+        super(globalConfig)
+    }
+    
+    public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
+        super.fromJsonValueCore(valueReceiver_Tk, varIdentifierName, 
+            quote($valueReceiver_Tk = $jsonVar_Tk.asFloat().getOrThrow().getValue()))
     }
 
     public func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens {

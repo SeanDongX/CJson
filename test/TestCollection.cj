@@ -5,9 +5,7 @@ from encoding import json.*
 from std import collection.*
 from std import io.*
 
-import serialization.*
-
-let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[[\"8\"],[\"7\"],[\"999\",\"25\"]],\"set\":[\"v1\",\"v2\"]}"
+import jsonmacro.*
 
 @JsonSerializable
 class ClassWithCollction {
@@ -20,10 +18,10 @@ class ClassWithCollction {
 
 @Test
 class TestCollection {
+    private let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[[\"8\"],[\"7\"],[\"999\",\"25\"]],\"set\":[\"v1\",\"v2\"]}"
+
     @TestCase
     func testToJson(): Unit {        
         @Assert(ClassWithCollction.fromJson(JSON_WITH_COLLECTION).toJson(), JSON_WITH_COLLECTION)
     }
 }
-
-main() {}

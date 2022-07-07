@@ -5,12 +5,7 @@ from encoding import json.*
 from std import collection.*
 from std import io.*
 
-import serialization.*
-
-let MYCLASS_JSON = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
-let MYCLASS_JSON_WITH_IGNORE = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09, \"ignored\": \"IgnoredValue\"}"
-let MYNEWCLASS_JSON = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
-let NESTED_JSON = "{\"p1\": \"v1\",\"nested\": {\"c1\": 10}}"
+import jsonmacro.*
 
 interface MyInterface {
     func rotate(): Unit
@@ -32,10 +27,6 @@ class MyClass <: BaseClass & MyInterface {
     public var intVar: Int64 = 10
     public var boolVar: Bool = false
     public var floatVar: Float64 = 99.01
-
-
-    @JsonIgnore
-    public var ignored: String = "OriginalValue"
 
     public init() {
         this.stringVar2 = "stringVar2+"
@@ -68,20 +59,11 @@ class MyNewClass <: BaseClass & MyInterface {
     }
 }
 
-@JsonSerializable
-class NestedChild {
-    public var c1: Int64 = 1
-}
-
-@JsonSerializable
-class NestedParent {
-    public var p1: String = "v1"
-    public var nested: NestedChild = NestedChild()
-}
-
 @Test
 public class TestSerialization {
-    
+    private let MYCLASS_JSON = "{\"stringVar1\": \"String1\",\"stringVar2_alias\": \"String2\", \"intVar\": 10, \"boolVar\": true, \"floatVar\": 38.09}"
+    private let MYNEWCLASS_JSON = "{\"stringVar1\": \"S1\",\"stringVar2_alias2\": \"S2\", \"v4\": 10}"
+
     @TestCase
     func testFromJson(): Unit {
         var myClass = MyClass()
@@ -120,20 +102,6 @@ public class TestSerialization {
     }
 
     @TestCase
-    func testIgnore(): Unit {
-        var myClass = MyClass()
-        myClass.stringVar1 = "String1"
-        myClass.stringVar2 = "String2"
-        myClass.intVar = 10
-        myClass.ignored = "SomeValue"
-        
-        @Assert(!myClass.toJson().contains("ignored"), true)
-        @Assert(MyClass.fromJson(MYCLASS_JSON).ignored, "OriginalValue")
-        @Assert(MyClass.fromJson(MYCLASS_JSON_WITH_IGNORE).ignored, "OriginalValue")
-
-    }
-
-    @TestCase
     func testFromJsonForTwoCustomName(): Unit {
         var myClass = MyClass()
         var jsonValues = JsonParser().parse(MYCLASS_JSON).asObject().getOrThrow()
@@ -156,20 +124,5 @@ public class TestSerialization {
         @Assert(myNewClass.stringVar1, myNewClass2.stringVar1)
         @Assert(myNewClass.stringVar2, myNewClass2.stringVar2)
         @Assert(myNewClass.v4, myNewClass2.v4)
-    }
-
-    @TestCase
-    func testNestedFromJson(): Unit {
-        var parent = NestedParent()
-        var jsonValues = JsonParser().parse(NESTED_JSON).asObject().getOrThrow()
-        parent.p1 = jsonValues.get("p1").asString().getOrThrow().getValue()
-        
-        parent.nested = NestedChild()
-        var nestedJson = jsonValues.get("nested").asObject().getOrThrow()
-        parent.nested.c1 =nestedJson.get("c1").asInt().getOrThrow().getValue()
-        
-        var parent1 = NestedParent.fromJson(NESTED_JSON)
-        @Assert(parent.p1, parent1.p1)
-        @Assert(parent.nested.c1, parent1.nested.c1)
     }
 }
