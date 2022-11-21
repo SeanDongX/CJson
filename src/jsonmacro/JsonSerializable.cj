@@ -29,7 +29,7 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
         globalConfig.reset()
         
         var superTypeExpr = Tokens()
-        if (superTypes.size() != 0) {
+        if (superTypes.size != 0) {
             superTypeExpr = quote(<: $superTypes)
         }
 
@@ -41,7 +41,7 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
             }
         )
     } catch(exp: AdaptorMissingException | TypeInferrenceException ) {
-        throw MacroExpansionException("Exception when expending JsonSerializable at class ${classIdent.value} : " + exp.getMessage())
+        throw MacroExpansionException("Exception when expending JsonSerializable at class ${classIdent.value} : " + exp.message)
     }
 }
 

@@ -13,7 +13,7 @@ public class TokenVerifier {
     * @return NodeFormat_ClassDecl the input token as NodeFormat_ClassDecl type
     */
     public static func verifyClassDecl(input_Tk: Tokens, marcoName: String): NodeFormat_ClassDecl {
-        var decl = ParseDecl(input_Tk)
+        var decl = parseDecl(input_Tk)
 
         if (!decl.isClassDecl()) {
             throw TokenVerificationException("${marcoName} is noly allow for class")
@@ -29,7 +29,7 @@ public class TokenVerifier {
     * @return NodeFormat_ClassDecl the input token as NodeFormat_VarDecl type
     */
     public static func verifyVarDecl(input_Tk: Tokens, marcoName: String): NodeFormat_VarDecl {
-        var decl = ParseDecl(input_Tk)
+        var decl = parseDecl(input_Tk)
 
         if (!decl.isVarDecl()) {
             throw TokenVerificationException("${marcoName} is noly allow for class level vars")
