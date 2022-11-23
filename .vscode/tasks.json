@@ -24,14 +24,22 @@
             "label": "build & test",
             "type": "shell",
             "command": "",
-            "dependsOrder": "sequence"
-            "dependsOn":["build", "test"]
+            "dependsOrder": "sequence",
+            "dependsOn":["build", "test"],
             "problemMatcher": []
         },
         {
-            "label": "debug marco",
+            "label": "debug macro",
             "type": "shell",
-            "command": "export CANGJIE_PATH=build/:$CANGJIE_PATH && cjc -debug-macro --module-name cjson --macro-lib=./build/cjson/libcjson_jsonmacro.so ${input:pickMarcoTarget}",
+            "command": "export CANGJIE_PATH=build/:$CANGJIE_PATH && cjc --debug-macro --module-name cjson --macro-lib=./build/cjson/libcjson_jsonmacro.so ${input:pickMarcoTarget}",
+            "problemMatcher": []
+        },
+        {
+            "label": "build & debug macro",
+            "type": "shell",
+            "command": "",
+            "dependsOrder": "sequence",
+            "dependsOn":["build", "debug macro"],
             "problemMatcher": []
         },
         {
@@ -44,8 +52,8 @@
     "inputs": [
         {
             "id": "pickMarcoTarget",
-            "type": "promptString"
-            "description": "marco target"
+            "type": "promptString",
+            "description": "marco target",
             "default": "./test/TestCollection.cj"          
         }
       ]
