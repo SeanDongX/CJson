@@ -1,3 +1,5 @@
+package test
+
 from std import unittest.*
 from std import unittest.testmacro.*
 

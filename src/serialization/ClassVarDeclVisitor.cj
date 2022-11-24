@@ -48,7 +48,7 @@ public class ClassVarDeclVisitor <: Visitor {
     *
     * @return true if wants to continue visisting
     */
-    override public func visitDecl(decl: Decl): Bool {
+    override public func visit(decl: Decl): Bool {
         if (decl.isFuncDecl()) {
             //stop processing func so it won't include var declaration inside funcs
             return false
@@ -58,7 +58,7 @@ public class ClassVarDeclVisitor <: Visitor {
             var varDecl = decl.asVarDecl()
             if (!globalConfig.ignoredVarSet.contains(varDecl.getIdentifier().value)) {
                 setDefaultValue(varDecl)
-                var_Tk_List.add(varDecl)
+                var_Tk_List.append(varDecl)
             }
             
         }

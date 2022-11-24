@@ -1,3 +1,5 @@
+package test
+
 from std import unittest.*
 from std import unittest.testmacro.*
 
@@ -24,10 +26,10 @@ public class TestCustomName {
     @TestCase
     func testFromJson(): Unit {
         var myClass = ClassWithCustomName()
-        var jsonValues = JsonParser().parse(MYCLASS_JSON).asObject().getOrThrow()
-        myClass.stringVar1 = jsonValues.get("stringVar1").asString().getOrThrow().getValue()
-        myClass.stringVar2 = jsonValues.get("stringVar2_alias").asString().getOrThrow().getValue() 
-        myClass.intVar = jsonValues.get("intVar").asInt().getOrThrow().getValue()
+        var jsonValues = JsonValue.fromStr(MYCLASS_JSON).asObject()
+        myClass.stringVar1 = jsonValues.get("stringVar1").getOrThrow().asString().getValue()
+        myClass.stringVar2 = jsonValues.get("stringVar2_alias").getOrThrow().asString().getValue() 
+        myClass.intVar = jsonValues.get("intVar").getOrThrow().asInt().getValue()
         
         var myClass1 = ClassWithCustomName.fromJson(MYCLASS_JSON)
         @Assert(myClass.stringVar1, myClass1.stringVar1)
@@ -50,3 +52,5 @@ public class TestCustomName {
         @Assert(JsonObject(map).toString(), myClass.toJson())
     }
 }
+
+main() {}

@@ -1,3 +1,5 @@
+package test
+
 from std import unittest.*
 from std import unittest.testmacro.*
 
@@ -67,12 +69,12 @@ public class TestSerialization {
     @TestCase
     func testFromJson(): Unit {
         var myClass = MyClass()
-        var jsonValues = JsonParser().parse(MYCLASS_JSON).asObject().getOrThrow()
-        myClass.stringVar1 = jsonValues.get("stringVar1").asString().getOrThrow().getValue()
-        myClass.stringVar2 = jsonValues.get("stringVar2_alias").asString().getOrThrow().getValue() 
-        myClass.intVar = jsonValues.get("intVar").asInt().getOrThrow().getValue()
-        myClass.boolVar = jsonValues.get("boolVar").asBool().getOrThrow().getValue()
-        myClass.floatVar = jsonValues.get("floatVar").asFloat().getOrThrow().getValue()
+        var jsonValues = JsonValue.fromStr(MYCLASS_JSON).asObject()
+        myClass.stringVar1 = jsonValues.get("stringVar1").getOrThrow().asString().getValue()
+        myClass.stringVar2 = jsonValues.get("stringVar2_alias").getOrThrow().asString().getValue() 
+        myClass.intVar = jsonValues.get("intVar").getOrThrow().asInt().getValue()
+        myClass.boolVar = jsonValues.get("boolVar").getOrThrow().asBool().getValue()
+        myClass.floatVar = jsonValues.get("floatVar").getOrThrow().asFloat().getValue()
 
         var myClass1 = MyClass.fromJson(MYCLASS_JSON)
         @Assert(myClass.stringVar1, myClass1.stringVar1)
@@ -104,10 +106,10 @@ public class TestSerialization {
     @TestCase
     func testFromJsonForTwoCustomName(): Unit {
         var myClass = MyClass()
-        var jsonValues = JsonParser().parse(MYCLASS_JSON).asObject().getOrThrow()
-        myClass.stringVar1 = jsonValues.get("stringVar1").asString().getOrThrow().getValue()
-        myClass.stringVar2 = jsonValues.get("stringVar2_alias").asString().getOrThrow().getValue() 
-        myClass.intVar = jsonValues.get("intVar").asInt().getOrThrow().getValue()
+        var jsonValues = JsonValue.fromStr(MYCLASS_JSON).asObject()
+        myClass.stringVar1 = jsonValues.get("stringVar1").getOrThrow().asString().getValue()
+        myClass.stringVar2 = jsonValues.get("stringVar2_alias").getOrThrow().asString().getValue() 
+        myClass.intVar = jsonValues.get("intVar").getOrThrow().asInt().getValue()
 
         var myClass1 = MyClass.fromJson(MYCLASS_JSON)
         @Assert(myClass.stringVar1, myClass1.stringVar1)
@@ -115,10 +117,10 @@ public class TestSerialization {
         @Assert(myClass.intVar, myClass1.intVar)
 
         var myNewClass = MyNewClass()
-        var jsonValues2 = JsonParser().parse(MYNEWCLASS_JSON).asObject().getOrThrow()
-        myNewClass.stringVar1 = jsonValues2.get("stringVar1").asString().getOrThrow().getValue()
-        myNewClass.stringVar2 = jsonValues2.get("stringVar2_alias2").asString().getOrThrow().getValue() 
-        myNewClass.v4 = jsonValues2.get("v4").asInt().getOrThrow().getValue()
+        var jsonValues2 = JsonValue.fromStr(MYNEWCLASS_JSON).asObject()
+        myNewClass.stringVar1 = jsonValues2.get("stringVar1").getOrThrow().asString().getValue()
+        myNewClass.stringVar2 = jsonValues2.get("stringVar2_alias2").getOrThrow().asString().getValue() 
+        myNewClass.v4 = jsonValues2.get("v4").getOrThrow().asInt().getValue()
 
         var myNewClass2 = MyNewClass.fromJson(MYNEWCLASS_JSON)
         @Assert(myNewClass.stringVar1, myNewClass2.stringVar1)

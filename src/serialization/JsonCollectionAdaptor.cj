@@ -55,7 +55,7 @@ abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
             $valueReceiver_Tk = $containType_Tk()
             var $genericVar_Tk: $genericType_Tk
 
-            for ($itemVar_Tk in $jsonVar_Tk.asArray().getOrThrow().getItems()) {                
+            for ($itemVar_Tk in $jsonVar_Tk.asArray().getItems()) {                
                 $genericValueProcess_Tk
                 $insertValueExpr_Tk
             }
@@ -99,7 +99,7 @@ class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
     
     protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens {
         return quote(
-            $valueReceiver_Tk.add($genericVar_Tk)
+            $valueReceiver_Tk.append($genericVar_Tk)
         )
     }
 }

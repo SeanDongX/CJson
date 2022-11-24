@@ -13,6 +13,11 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 - ⛳ 支持使用默认值，克服json中的缺失值
 
 ### 接口说明
+- 使用@JsonSerializable标记被序列化/反序列化对象
+- 使用@JsonName["alias"]定制属性的序列化键值
+- 使用JsonIgnore标记需要被忽略的属性
+
+详见 /src/test目录下的测试用例
 
 
 ### 编译执行
@@ -24,5 +29,5 @@ cpm build
 
 单元测试：
 ```shell
-cpm test test
+cpm test
 ```
