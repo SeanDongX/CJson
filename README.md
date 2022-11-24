@@ -24,5 +24,5 @@ cpm build
 
 单元测试：
 ```shell
-cpm test test
+cpm test
 ```
