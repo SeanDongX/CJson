@@ -1,3 +1,5 @@
+package test
+
 from std import unittest.*
 from std import unittest.testmacro.*
 
@@ -26,12 +28,12 @@ public class TestNested {
     @TestCase
     func testNestedFromJson(): Unit {
         var parent = NestedParent()
-        var jsonValues = JsonParser().parse(NESTED_JSON).asObject().getOrThrow()
-        parent.p1 = jsonValues.get("p1").asString().getOrThrow().getValue()
+        var jsonValues = JsonValue.fromStr(NESTED_JSON).asObject()
+        parent.p1 = jsonValues.get("p1").getOrThrow().asString().getValue()
         
         parent.nested = NestedChild()
-        var nestedJson = jsonValues.get("nested").asObject().getOrThrow()
-        parent.nested.c1 =nestedJson.get("c1").asInt().getOrThrow().getValue()
+        var nestedJson = jsonValues.get("nested").getOrThrow().asObject()
+        parent.nested.c1 =nestedJson.get("c1").getOrThrow().asInt().getValue()
         
         var parent1 = NestedParent.fromJson(NESTED_JSON)
         @Assert(parent.p1, parent1.p1)

@@ -1,3 +1,5 @@
+package test
+
 from std import unittest.*
 from std import unittest.testmacro.*
 
@@ -24,8 +26,4 @@ public class TestDefaultValue {
     func testFromJson(): Unit {
         @Assert(DefaultValueClass.fromJson(DEFAULT_VALUE_JSON).toJson(), DEFAULT_TOJSON)
     }
-}
-
-main() {
-
 }

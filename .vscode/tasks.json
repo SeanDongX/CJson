@@ -54,7 +54,7 @@
             "id": "pickMarcoTarget",
             "type": "promptString",
             "description": "marco target",
-            "default": "./test/TestCollection.cj"          
+            "default": "./src/test/TestCollection.cj"          
         }
       ]
 }

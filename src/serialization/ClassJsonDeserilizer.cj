@@ -22,7 +22,7 @@ public class ClassJsonDeserilizer <: ClassProcessor {
 
         return quote(
             public static func fromJson(json: String): $classIdentity_Tk {
-                var $jsonOjbectToken = JsonParser().parse(json).asObject().getOrThrow()
+                var $jsonOjbectToken = JsonValue.fromStr(json).asObject()
                 
                 var ret = $classIdentity_Tk()
 
@@ -48,7 +48,7 @@ public class ClassJsonDeserilizer <: ClassProcessor {
         let (identifier, name, typeName) = getVarInfo(var_Tk)
         var mappedNameValue = getMappedName(name)
         
-        var nodeJson_Tk = quote($jsonOjbectVar_Tk.get($mappedNameValue))
+        var nodeJson_Tk = quote($jsonOjbectVar_Tk.get($mappedNameValue).getOrThrow())
         var valueReveiverTK = quote(ret.$identifier)
         try {            
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
