@@ -1,9 +1,5 @@
 macro package jsonmacro
 
-from std import ast.*
-from encoding import json.*
-
-import serialization.*
 
 /*
 * Macro for custom json var name mapping
