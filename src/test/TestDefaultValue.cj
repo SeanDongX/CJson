@@ -1,12 +1,5 @@
 package test
 
-from std import unittest.*
-from std import unittest.testmacro.*
-
-from encoding import json.*
-from std import collection.*
-
-import jsonmacro.*
 
 @JsonSerializable
 class DefaultValueClass {

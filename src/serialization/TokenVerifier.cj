@@ -1,6 +1,5 @@
 package serialization
 
-from std import ast.*
 
 /*
 * Verifier for tokens
