@@ -19,6 +19,25 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 
 详见 /src/test目录下的测试用例
 
+```
+@JsonSerializable
+class ClassWithCollction {
+    public var p1: String = "v1"
+    public var p2: Int64 = 1
+    public var array: ArrayList<String> =  ArrayList<String>()
+}
+
+@Test
+class TestCollection {
+    private let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[\"8\",\"7\"]}"
+
+    @TestCase
+    func testToJson(): Unit {        
+        @Assert(ClassWithCollction.fromJson(JSON_WITH_COLLECTION).toJson(), JSON_WITH_COLLECTION)
+    }
+}
+
+```
 
 ### 编译执行
 
