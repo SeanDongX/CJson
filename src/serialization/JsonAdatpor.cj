@@ -40,12 +40,17 @@ public interface JsonAdaptor {
     func toJsonValueFunc(valueVar_Tk: Tokens, funcName_Tk: Tokens, varIdentifierName: String): Tokens
 }
 
+public interface DefaultValueExprStore {
+    func hasValueExpr(varIdentifierName: String): Bool
+    func getValueExpr(varIdentifierName: String): NodeFormat_Expr
+}
+
 open class Adaptor {
     protected var thisType: Option<NodeFormat_Type> = None
-    protected var globalConfig: GlobalConfig
+    protected var defalutValueExprStore: DefaultValueExprStore
 
-    public init(globalConfig: GlobalConfig) {
-        this.globalConfig = globalConfig
+    public init(defalutValueExprStore: DefaultValueExprStore) {
+        this.defalutValueExprStore = defalutValueExprStore
     }
 
     
@@ -68,10 +73,10 @@ open class Adaptor {
         var internalDefaultValueAssign_Tk = defaultValueAssign_Tk
         var hasDefaultValue = quote(false)
 
-        if (globalConfig.defaultValueMap.contains(varIdentifierName)) {
+        if (defalutValueExprStore.hasValueExpr(varIdentifierName)) {
             hasDefaultValue = quote(true)
             internalDefaultValueAssign_Tk = quote(
-                $valueReceiver_TK = $(globalConfig.defaultValueMap.get(varIdentifierName).getOrThrow())
+                $valueReceiver_TK = $(defalutValueExprStore.getValueExpr(varIdentifierName))
             )
         }
 
@@ -90,8 +95,8 @@ open class Adaptor {
 }
 
 class StringAdaptor <: Adaptor & JsonAdaptor {
-    public init(globalConfig: GlobalConfig) {
-        super(globalConfig)
+    public init(defalutValueExprStore: DefaultValueExprStore) {
+        super(defalutValueExprStore)
     }
 
     public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -110,8 +115,8 @@ class StringAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class BoolAdaptor <: Adaptor & JsonAdaptor {
-    public init(globalConfig: GlobalConfig) {
-        super(globalConfig)
+    public init(defalutValueExprStore: DefaultValueExprStore) {
+        super(defalutValueExprStore)
     }
 
     public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -130,8 +135,8 @@ class BoolAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class IntAdaptor <: Adaptor & JsonAdaptor {
-    public init(globalConfig: GlobalConfig) {
-        super(globalConfig)
+    public init(defalutValueExprStore: DefaultValueExprStore) {
+        super(defalutValueExprStore)
     }
     
     public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
@@ -150,8 +155,8 @@ class IntAdaptor <: Adaptor & JsonAdaptor {
 }
 
 class FloatAdaptor <: Adaptor & JsonAdaptor {
-    public init(globalConfig: GlobalConfig) {
-        super(globalConfig)
+    public init(defalutValueExprStore: DefaultValueExprStore) {
+        super(defalutValueExprStore)
     }
     
     public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {

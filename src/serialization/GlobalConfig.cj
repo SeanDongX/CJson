@@ -5,7 +5,7 @@ from std import collection.*
 /*
 * The global configuration
 */
-public class GlobalConfig {
+public class GlobalConfig <: DefaultValueExprStore {
     public let adaptorFactry = JsonAdaptorFactory()
     
     public let userDefinedVarMap : HashMap<String, String> = HashMap()
@@ -32,5 +32,13 @@ public class GlobalConfig {
     public func reset() {
         this.userDefinedVarMap.clear()
         this.ignoredVarSet.clear()
+    }
+
+    public func hasValueExpr(varIdentifierName: String) {
+        return defaultValueMap.contains(varIdentifierName)
+    }
+
+    public func getValueExpr(varIdentifierName: String) {
+        return defaultValueMap.get(varIdentifierName).getOrThrow()
     }
 }
