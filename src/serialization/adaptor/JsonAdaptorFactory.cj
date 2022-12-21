@@ -1,4 +1,4 @@
-package serialization
+package serialization.adaptor
 
 /*
 * The factory for json adaptors
@@ -22,5 +22,11 @@ public class JsonAdaptorFactory {
     */
     public func getAdaptor(identifier: String): JsonAdaptor {
         return map.get(identifier).getOrThrow({  => AdaptorMissingException("No adaptor registered for ${identifier}") })
+    }
+}
+
+public class AdaptorMissingException <: Exception {
+    public init(message: String) {
+        super(message)
     }
 }

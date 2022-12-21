@@ -2,6 +2,8 @@ package serialization
 
 from std import collection.*
 
+import serialization.adaptor.*
+
 /*
 * The global configuration
 */

@@ -1,4 +1,7 @@
-package serialization
+package serialization.adaptor
+
+from std import ast.*
+from std import collection.Map, collection.HashMap
 
 /*
 * Interface for json adaptor
@@ -45,7 +48,7 @@ public interface DefaultValueExprStore {
     func getValueExpr(varIdentifierName: String): NodeFormat_Expr
 }
 
-open class Adaptor {
+public open class Adaptor {
     protected var thisType: Option<NodeFormat_Type> = None
     protected var defalutValueExprStore: DefaultValueExprStore
 
@@ -94,7 +97,7 @@ open class Adaptor {
     
 }
 
-class StringAdaptor <: Adaptor & JsonAdaptor {
+public class StringAdaptor <: Adaptor & JsonAdaptor {
     public init(defalutValueExprStore: DefaultValueExprStore) {
         super(defalutValueExprStore)
     }
@@ -114,7 +117,7 @@ class StringAdaptor <: Adaptor & JsonAdaptor {
     }
 }
 
-class BoolAdaptor <: Adaptor & JsonAdaptor {
+public class BoolAdaptor <: Adaptor & JsonAdaptor {
     public init(defalutValueExprStore: DefaultValueExprStore) {
         super(defalutValueExprStore)
     }
@@ -134,7 +137,7 @@ class BoolAdaptor <: Adaptor & JsonAdaptor {
     }
 }
 
-class IntAdaptor <: Adaptor & JsonAdaptor {
+public class IntAdaptor <: Adaptor & JsonAdaptor {
     public init(defalutValueExprStore: DefaultValueExprStore) {
         super(defalutValueExprStore)
     }
@@ -154,7 +157,7 @@ class IntAdaptor <: Adaptor & JsonAdaptor {
     }
 }
 
-class FloatAdaptor <: Adaptor & JsonAdaptor {
+public class FloatAdaptor <: Adaptor & JsonAdaptor {
     public init(defalutValueExprStore: DefaultValueExprStore) {
         super(defalutValueExprStore)
     }

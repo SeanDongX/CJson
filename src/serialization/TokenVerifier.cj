@@ -1,6 +1,5 @@
 package serialization
 
-
 /*
 * Verifier for tokens
 */

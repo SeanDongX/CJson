@@ -1,9 +1,9 @@
-package serialization
+package serialization.adaptor
 
 /*
 * Core implementation of JsonAdaptor for collections
 */
-abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
+public abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
     private var adaptorFactory: JsonAdaptorFactory
     
     public init(defalutValueExprStore: DefaultValueExprStore, adaptorFactory: JsonAdaptorFactory) {
@@ -92,7 +92,7 @@ abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
     }
 }
 
-class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
+public class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
     public init(defalutValueExprStore: DefaultValueExprStore, adaptorFactory: JsonAdaptorFactory) {
         super(defalutValueExprStore, adaptorFactory)
     }
@@ -104,7 +104,7 @@ class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
     }
 }
 
-class HashSetAdaptor <: JsonCollectionAdaptorImpl {
+public class HashSetAdaptor <: JsonCollectionAdaptorImpl {
     public init(defalutValueExprStore: DefaultValueExprStore, adaptorFactory: JsonAdaptorFactory) {
         super(defalutValueExprStore, adaptorFactory)
     }
@@ -116,4 +116,23 @@ class HashSetAdaptor <: JsonCollectionAdaptorImpl {
     }
 }
 
+extend NodeFormat_Type {
 
+    /*
+    * Gets the type name
+    *
+    * @return String the name of the type
+    */
+    public func getTypeName(): String {
+        try {
+
+            if (this.isRefType()) {
+                return this.asRefType().getIdentifier().value
+            } else {
+                return this.asPrimitiveType().getPrimitive().value
+            }            
+        } catch (exp: NoneValueException) {
+            throw Exception("Error when try to get type name")
+        }
+    }
+}

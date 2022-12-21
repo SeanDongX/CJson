@@ -2,6 +2,9 @@ macro package jsonmacro
 
 from std import collection.*
 
+import serialization.*
+import serialization.adaptor.*
+
 /*
 * Macro for inserting json serialization/deserialization func onto target class
 * @param input_Tk the target class token

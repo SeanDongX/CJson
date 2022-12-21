@@ -3,8 +3,6 @@ macro package jsonmacro
 from std import ast.*
 from encoding import json.*
 
-import serialization.*
-
 /*
 * Macro for ignore the decorated var when doing json serialization/deserialization
 * @param input_Tk the target var
