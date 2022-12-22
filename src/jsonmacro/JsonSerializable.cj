@@ -4,6 +4,7 @@ from std import collection.*
 
 import serialization.*
 import serialization.adaptor.*
+import serialization.common.*
 
 /*
 * Macro for inserting json serialization/deserialization func onto target class

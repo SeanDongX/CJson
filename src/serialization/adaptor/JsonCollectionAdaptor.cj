@@ -1,5 +1,7 @@
 package serialization.adaptor
 
+import serialization.common.*
+
 /*
 * Core implementation of JsonAdaptor for collections
 */
@@ -113,26 +115,5 @@ public class HashSetAdaptor <: JsonCollectionAdaptorImpl {
         return quote(
             $valueReceiver_Tk.put($genericVar_Tk)
         )
-    }
-}
-
-extend NodeFormat_Type {
-
-    /*
-    * Gets the type name
-    *
-    * @return String the name of the type
-    */
-    public func getTypeName(): String {
-        try {
-
-            if (this.isRefType()) {
-                return this.asRefType().getIdentifier().value
-            } else {
-                return this.asPrimitiveType().getPrimitive().value
-            }            
-        } catch (exp: NoneValueException) {
-            throw Exception("Error when try to get type name")
-        }
     }
 }

@@ -24,9 +24,3 @@ public class JsonAdaptorFactory {
         return map.get(identifier).getOrThrow({  => AdaptorMissingException("No adaptor registered for ${identifier}") })
     }
 }
-
-public class AdaptorMissingException <: Exception {
-    public init(message: String) {
-        super(message)
-    }
-}

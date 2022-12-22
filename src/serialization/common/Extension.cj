@@ -1,6 +1,12 @@
-package serialization
+package serialization.common
 
-extend NodeFormat_Type {
+from std import ast.*
+
+public interface TokenExtesion {
+
+}
+
+extend NodeFormat_Type <: TokenExtesion {
 
     /*
     * Gets the type name
@@ -21,7 +27,7 @@ extend NodeFormat_Type {
     }
 }
 
-extend NodeFormat_VarDecl {
+extend NodeFormat_VarDecl <: TokenExtesion {
 
     /*
      * Get info from VarDecl

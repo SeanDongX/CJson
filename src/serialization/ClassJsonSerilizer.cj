@@ -1,5 +1,7 @@
 package serialization
 
+import serialization.common.*
+
 public class ClassJsonSerilizer <: ClassProcessor {
     
     public init(globalConfig: GlobalConfig) {
