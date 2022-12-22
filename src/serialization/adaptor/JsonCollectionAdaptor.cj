@@ -93,27 +93,3 @@ public abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
         )
     }
 }
-
-public class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
-    public init(defalutValueExprStore: DefaultValueExprStore, adaptorFactory: JsonAdaptorFactory) {
-        super(defalutValueExprStore, adaptorFactory)
-    }
-    
-    protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens {
-        return quote(
-            $valueReceiver_Tk.append($genericVar_Tk)
-        )
-    }
-}
-
-public class HashSetAdaptor <: JsonCollectionAdaptorImpl {
-    public init(defalutValueExprStore: DefaultValueExprStore, adaptorFactory: JsonAdaptorFactory) {
-        super(defalutValueExprStore, adaptorFactory)
-    }
-    
-    protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens {
-        return quote(
-            $valueReceiver_Tk.put($genericVar_Tk)
-        )
-    }
-}
