@@ -31,7 +31,13 @@
         {
             "label": "debug macro",
             "type": "shell",
-            "command": "export CANGJIE_PATH=build/:$CANGJIE_PATH && cjc --debug-macro --module-name cjson --macro-lib=./build/cjson/libcjson_jsonmacro.so ${input:pickMarcoTarget}",
+            "command": "export CANGJIE_PATH=build/:$CANGJIE_PATH && cjc --debug-macro --module-name CJson --macro-lib=./build/CJson/libCJson_jsonmacro.so ${input:pickMarcoTarget}",
+            "problemMatcher": []
+        },
+        {
+            "label": "debug macro package",
+            "type": "shell",
+            "command": "export CANGJIE_PATH=build/:$CANGJIE_PATH && cjc --debug-macro --module-name CJson --macro-lib=./build/CJson/libCJson_jsonmacro.so -p ./src/test",
             "problemMatcher": []
         },
         {
@@ -45,7 +51,7 @@
         {
             "label": "clean marco debug output",
             "type": "shell",
-            "command": "rm ./test/debug_*.cj",
+            "command": "rm ./src/test/*.macrocall",
             "problemMatcher": []
         }
     ],
@@ -54,7 +60,7 @@
             "id": "pickMarcoTarget",
             "type": "promptString",
             "description": "marco target",
-            "default": "./src/test/TestCollection.cj"          
+            "default": "./src/test/TestCustomAdaptor.cj"
         }
       ]
 }
