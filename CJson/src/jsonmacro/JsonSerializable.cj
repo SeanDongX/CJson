@@ -12,43 +12,39 @@ import serialization.common.*
 * @return token the expaned token representation
 */
 public macro JsonSerializable(input_Tk: Tokens): Tokens {    
-    let decl = TokenVerifier.verifyClassDecl(input_Tk, Const.JSON_SERIALIZABLE_MACRO_NAME)
-    
-    let classModifier = decl.getModifiers()
-    let classKeyWord = decl.getKeyword()
-    let classIdent = decl.getIdentifier()
-    let classBody = decl.getBody()
-    let superTypes = decl.getSuperTypes()
+    let declPair = TokenVerifier.verifyClassDecl(input_Tk, Const.JSON_SERIALIZABLE_MACRO_NAME)
+
+    var classAndStructInfo = ClassAndStructInfo()
+
+    match(declPair) {
+        case (Some(vc), None) =>
+            classAndStructInfo.classModifier = vc.getModifiers()
+            classAndStructInfo.classKeyWord = vc.getKeyword()
+            classAndStructInfo.classIdent = vc.getIdentifier()
+            classAndStructInfo.classBody = vc.getBody()
+            classAndStructInfo.superTypes = vc.getSuperTypes()
+            classAndStructInfo.varDeclList = checkVars(vc, globalConfig)
+
+        case (None, Some(vs)) => 
+            classAndStructInfo.classModifier = vs.getModifiers()
+            classAndStructInfo.classKeyWord = vs.getKeyword()
+            classAndStructInfo.classIdent = vs.getIdentifier()
+            classAndStructInfo.classBody = vs.getBody()
+            classAndStructInfo.superTypes = vs.getSuperTypes()
+            classAndStructInfo.varDeclList = checkVars(vs, globalConfig)
+
+        case _ => ()
+    }
 
     try {
-        let varDeclList = checkVars(decl, globalConfig)
-        let fromJsonFunc = ClassJsonDeserilizer(globalConfig).makeFromJsonFunc(classIdent, varDeclList)
-        let toJsonFunc = ClassJsonSerilizer(globalConfig).makeToJsonFunc(varDeclList)
-
-        //reset global config next class
-        globalConfig.reset()
-        
-        var superTypeExpr = Tokens()
-        if (superTypes.size != 0) {
-            superTypeExpr = quote(<: $superTypes & IJsonSerializable<$classIdent>)
-        } else {
-            superTypeExpr = quote(<: IJsonSerializable<$classIdent>)
-        }
-
-        return quote(
-            $classModifier $classKeyWord $classIdent $superTypeExpr {
-                $classBody
-                $fromJsonFunc
-                $toJsonFunc
-            }
-        )
+        return classAndStructInfo.composeWithJsonFunc(globalConfig)
     } catch(exp: AdaptorMissingException | TypeInferrenceException ) {
-        throw MacroExpansionException("Exception when expending JsonSerializable at class ${classIdent.value} : " + exp.message)
+        throw MacroExpansionException("Exception when expending JsonSerializable at class/struct ${classAndStructInfo.classIdent.value} : " + exp.message)
     }
 }
 
 
-func checkVars(classDecl_Tk: NodeFormat_ClassDecl, globalConfig: GlobalConfig): ArrayList<NodeFormat_VarDecl> {
+func checkVars(classDecl_Tk: FlatBufferObject, globalConfig: GlobalConfig): ArrayList<NodeFormat_VarDecl> {
     let varVisitor = ClassVarDeclVisitor(globalConfig)
     Walker.walk(classDecl_Tk, varVisitor)
     globalConfig.defaultValueMap = varVisitor.getDefaultVarValueMap()

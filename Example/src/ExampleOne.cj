@@ -35,13 +35,13 @@ public class ExampleOne_Init {
 }
 
 
-// //struct is also supported
-// @JsonSerializable
-// public struct ExampleOneStruct {
-//     var name: String = "Labor Day"
-//     var time: time
+//struct is also supported
+@JsonSerializable
+public struct ExampleOneStruct {
+    var name: String = "Labor Day"
+    var time: Time
 
-//     public init (time: Time) {
-//         this.time = time
-//     }
-// }
+    public init () {
+        this.time = Time.now()
+    }
+}

@@ -10,14 +10,18 @@ public class TokenVerifier {
     * @marcoName the marco name to check against
     * @return NodeFormat_ClassDecl the input token as NodeFormat_ClassDecl type
     */
-    public static func verifyClassDecl(input_Tk: Tokens, marcoName: String): NodeFormat_ClassDecl {
+    public static func verifyClassDecl(input_Tk: Tokens, marcoName: String): (Option<NodeFormat_ClassDecl>, Option<NodeFormat_StructDecl>) {
         var decl = parseDecl(input_Tk)
 
-        if (!decl.isClassDecl()) {
-            throw TokenVerificationException("${marcoName} is noly allow for class")
+        if (decl.isClassDecl()) {
+            return (Some(decl.asClassDecl()), None)
+        } else if (decl.isStructDecl()) {
+            return (None, Some(decl.asStructDecl()))
+        } else {
+            throw TokenVerificationException("${marcoName} is only allowed for class or struct")
         }
 
-        return decl.asClassDecl()
+        
     }
 
     /*
