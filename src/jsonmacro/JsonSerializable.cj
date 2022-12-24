@@ -30,7 +30,9 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
         
         var superTypeExpr = Tokens()
         if (superTypes.size != 0) {
-            superTypeExpr = quote(<: $superTypes)
+            superTypeExpr = quote(<: $superTypes & IJsonSerializable<$classIdent>)
+        } else {
+            superTypeExpr = quote(<: IJsonSerializable<$classIdent>)
         }
 
         return quote(
