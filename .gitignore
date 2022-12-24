@@ -10,7 +10,8 @@ build/
 bin/
 debug_*.cj
 /main
-.vscode/cpm_build_args.json
+cpm_build_args.json
+settings.json
 log.*.txt
 
 .vscode/settings.json
