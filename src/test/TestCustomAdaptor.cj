@@ -2,12 +2,14 @@ package test
 
 from std import ast.*
 
+import serialization.IJsonSerializable
+
 struct CustomTime {
     public CustomTime(let value: Time){
     }
 }
 
-extend CustomTime {
+extend CustomTime <: IJsonSerializable<CustomTime> {
     public static func fromJson(json: String) : CustomTime {
         var jsonObject = JsonValue.fromStr( json ).asObject() 
         return CustomTime(Time.parse(jsonObject.get("value").getOrThrow().asString().getValue().substring(5)))
