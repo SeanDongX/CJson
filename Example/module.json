@@ -7,7 +7,7 @@
 	"requires": {},
 	"package_requires": {
 		"path_option": [
-			"/home/sean/workspace/CJson/CJson/build/CJson"
+			"../CJson/build/CJson"
 		],
 		"package_option": {}
 	},
