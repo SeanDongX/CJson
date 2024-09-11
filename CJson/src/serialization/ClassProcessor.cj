@@ -1,4 +1,4 @@
-package serialization
+package CJson.serialization
 
 /*
 * Processor for decorated class
@@ -15,7 +15,7 @@ public open class ClassProcessor {
     * @param vark_Tk the var token to get information from
     * @return (Token, String, String) the identifier, name, type name of the var
     */
-    protected func getVarInfo(vark_Tk: NodeFormat_VarDecl): (Token, String, String) {
+    protected func getVarInfo(vark_Tk: VarDecl): (Token, String, String) {
         return vark_Tk.getVarInfo()
     }
 

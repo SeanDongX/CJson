@@ -1,4 +1,4 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
 
 /*
 * The factory for json adaptors

@@ -1,4 +1,4 @@
-package serialization
+package CJson.serialization
 
 /*
 * Verifier for tokens
@@ -10,13 +10,13 @@ public class TokenVerifier {
     * @marcoName the marco name to check against
     * @return NodeFormat_ClassDecl the input token as NodeFormat_ClassDecl type
     */
-    public static func verifyClassDecl(input_Tk: Tokens, marcoName: String): (Option<NodeFormat_ClassDecl>, Option<NodeFormat_StructDecl>) {
+    public static func verifyClassDecl(input_Tk: Tokens, marcoName: String): (Option<ClassDecl>, Option<StructDecl>) {
         var decl = parseDecl(input_Tk)
 
-        if (decl.isClassDecl()) {
-            return (Some(decl.asClassDecl()), None)
-        } else if (decl.isStructDecl()) {
-            return (None, Some(decl.asStructDecl()))
+        if (decl is ClassDecl) {
+            return ((decl as ClassDecl), None)
+        } else if (decl is StructDecl) {
+            return (None, (decl as StructDecl))
         } else {
             throw TokenVerificationException("${marcoName} is only allowed for class or struct")
         }
@@ -28,16 +28,16 @@ public class TokenVerifier {
     * Verifies var decl token
     * @param input_Tk the token to verify
     * @marcoName the marco name to check against
-    * @return NodeFormat_ClassDecl the input token as NodeFormat_VarDecl type
+    * @return NodeFormat_ClassDecl the input token as VarDecl type
     */
-    public static func verifyVarDecl(input_Tk: Tokens, marcoName: String): NodeFormat_VarDecl {
+    public static func verifyVarDecl(input_Tk: Tokens, marcoName: String): VarDecl {
         var decl = parseDecl(input_Tk)
 
-        if (!decl.isVarDecl()) {
+        if (!(decl is VarDecl)) {
             throw TokenVerificationException("${marcoName} is noly allow for class level vars")
         }
 
-        return decl.asVarDecl()
+        return (decl as VarDecl).getOrThrow()
     }
 }
   

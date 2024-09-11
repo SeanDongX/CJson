@@ -1,24 +1,26 @@
-package test
+package CJson.test
 
-from std import ast.*
+import std.ast.*
 
-import serialization.IJsonSerializable
+import CJson.serialization.IJsonSerializable
+import CJson.jsonmacro.*
+import std.time.DateTime
 
 struct CustomTime {
-    public CustomTime(let value: Time){
+    public CustomTime(let value: DateTime){
     }
 }
 
 extend CustomTime <: IJsonSerializable<CustomTime> {
     public static func fromJson(json: String) : CustomTime {
         var jsonObject = JsonValue.fromStr( json ).asObject() 
-        return CustomTime(Time.parse(jsonObject.get("value").getOrThrow().asString().getValue().substring(5)))
+        return CustomTime(DateTime.parse(jsonObject.get("value").getOrThrow().asString().getValue()[5..]))
     }
 
     public func toJsonObject(): JsonObject {
         var map: HashMap < String , JsonValue >= HashMap()
         let s = "CUST_"
-        map.put("value", JsonString(s.concat(this.value.toString()))) 
+        map.put("value", JsonString(String.join(s, this.value.toString())))
         return JsonObject(map)
     }
 
@@ -30,7 +32,7 @@ extend CustomTime <: IJsonSerializable<CustomTime> {
 @JsonSerializable
 class ClassWithCustomTimeAdaptor {
     public var intVar: Int64 = 10
-    public var time: CustomTime = CustomTime(Time.now())
+    public var time: CustomTime = CustomTime(DateTime.now())
 }
 
 @Test

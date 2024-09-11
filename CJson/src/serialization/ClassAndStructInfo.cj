@@ -1,12 +1,15 @@
-package serialization
+package CJson.serialization
+
+internal import std.ast.*
+internal import std.collection.*
 
 public struct ClassAndStructInfo {
-    public var varDeclList = ArrayList<NodeFormat_VarDecl>()
-    public var classModifier = Tokens()
+    public var varDeclList = ArrayList<VarDecl>()
+    public var classModifier = ArrayList<Modifier>()
     public var classKeyWord = Token()
     public var classIdent = Token()
-    public var classBody = Array<NodeFormat_Decl>()
-    public var superTypes = Array<NodeFormat_Type>()
+    public var classBody = ArrayList<Decl>()
+    public var superTypes = ArrayList<TypeNode>()
 
     public func composeWithJsonFunc(globalConfig: GlobalConfig) {
         let fromJsonFunc = ClassJsonDeserilizer(globalConfig).makeFromJsonFunc(classIdent, varDeclList)

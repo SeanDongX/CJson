@@ -8,6 +8,9 @@
 out/
 build/
 bin/
+.cache/
+target/
+
 debug_*.cj
 /main
 cpm_build_args.json

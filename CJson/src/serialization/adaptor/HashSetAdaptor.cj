@@ -1,4 +1,4 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
 
 public class HashSetAdaptor <: JsonCollectionAdaptorImpl {
     public init(defalutValueExprStore: DefaultValueExprStore, adaptorFactory: JsonAdaptorFactory) {

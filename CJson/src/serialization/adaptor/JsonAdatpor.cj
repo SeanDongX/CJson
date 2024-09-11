@@ -1,7 +1,7 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
 
-from std import ast.*
-from std import collection.Map, collection.HashMap
+import std.ast.*
+import std.{collection.Map, collection.HashMap}
 
 /*
 * Interface for json adaptor
@@ -13,7 +13,7 @@ public interface JsonAdaptor {
     * @param thisType the type token for the identifier, the token is used
     * for later operations when doing serializationd and deserialization
     */
-    func setType(thisType: NodeFormat_Type): Unit
+    func setType(thisType: TypeNode): Unit
 
     /*
     * Makes token representation for deserializing the given json to pass it on to the receiver

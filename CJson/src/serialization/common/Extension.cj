@@ -1,12 +1,12 @@
-package serialization.common
+package CJson.serialization.common
 
-from std import ast.*
+import std.ast.*
 
 public interface TokenExtesion {
 
 }
 
-extend NodeFormat_Type <: TokenExtesion {
+extend TypeNode <: TokenExtesion {
 
     /*
     * Gets the type name
@@ -15,11 +15,10 @@ extend NodeFormat_Type <: TokenExtesion {
     */
     public func getTypeName(): String {
         try {
-
-            if (this.isRefType()) {
-                return this.asRefType().getIdentifier().value
+            if (this is RefType) {
+                return (this as RefType).getOrThrow().identifier.value
             } else {
-                return this.asPrimitiveType().getPrimitive().value
+                return (this as PrimitiveType).getOrThrow().keyword.value
             }            
         } catch (exp: NoneValueException) {
             throw Exception("Error when try to get type name")
@@ -27,7 +26,7 @@ extend NodeFormat_Type <: TokenExtesion {
     }
 }
 
-extend NodeFormat_VarDecl <: TokenExtesion {
+extend VarDecl <: TokenExtesion {
 
     /*
      * Get info from VarDecl
@@ -35,12 +34,12 @@ extend NodeFormat_VarDecl <: TokenExtesion {
      * @return (Token, String, String) the identifier, name, type name of the var
      */
     public func getVarInfo(): (Token, String, String) {
-        let identifier = this.getIdentifier()
+        let identifier = identifier
         let name = identifier.value
         var typeName: String
 
         try {
-            typeName = this.getType().getOrThrow().getTypeName()
+            typeName = this.declType.getTypeName()
         } catch (exp: NoneValueException) {
             throw TypeInferrenceException("Field ${name} must be declared with a specific type instead of using a inferred type")
         }

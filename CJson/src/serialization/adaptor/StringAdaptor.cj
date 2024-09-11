@@ -1,4 +1,4 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
 
 public class StringAdaptor <: Adaptor & JsonAdaptor {
     public init(defalutValueExprStore: DefaultValueExprStore) {

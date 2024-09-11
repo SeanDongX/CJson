@@ -1,6 +1,7 @@
-package test
+package CJson.test
 
-
+import CJson.jsonmacro.*
+import CJson.serialization.IJsonSerializable
 
 @JsonSerializable
 class NestedChild {

@@ -1,5 +1,7 @@
-package test
+package CJson.test
 
+import CJson.jsonmacro.*
+import CJson.serialization.IJsonSerializable
 
 interface MyInterface {
     func rotate(): Unit

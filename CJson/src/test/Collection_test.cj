@@ -1,13 +1,14 @@
-package test
+package CJson.test
 
-from std import unittest.*
-from std import unittest.testmacro.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
-from encoding import json.*
-from std import collection.*
-from std import io.*
+internal import encoding.json.*
+internal import std.collection.*
+internal import std.io.*
 
-import jsonmacro.*
+import CJson.jsonmacro.*
+import CJson.serialization.IJsonSerializable
 
 @JsonSerializable
 class ClassWithCollction {
@@ -36,7 +37,7 @@ class ClassWithMoreTypeOfCollctions {
 
 @Test
 class TestMoreTypeOfCollctions {
-    private let JSON_WITH_COLLECTION = "{\"stringArray\":[\"8\",\"7\"],\"int64Set\":[88,109],\"boolArray\":[false,true,false],\"float64Set\":[88.800000,-111.092000]}"
+    private let JSON_WITH_COLLECTION = "{\"stringArray\":[\"8\",\"7\"],\"int64Set\":[88,109],\"boolArray\":[false,true,false],\"float64Set\":[88.8,-111.092]}"
 
     @TestCase
     func testToJson(): Unit {        

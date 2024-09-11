@@ -1,5 +1,7 @@
-package test
+package CJson.test
 
+import CJson.serialization.IJsonSerializable
+import CJson.jsonmacro.*
 
 @JsonSerializable
 class ClassWithCustomName {   

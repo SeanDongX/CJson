@@ -1,9 +1,6 @@
-package serialization
+package CJson.serialization
 
-from std import collection.*
-
-import serialization.adaptor.*
-
+import CJson.serialization.adaptor.*
 /*
 * The global configuration
 */
@@ -12,7 +9,7 @@ public class GlobalConfig <: DefaultValueExprStore {
     
     public let userDefinedVarMap : HashMap<String, String> = HashMap()
     public let ignoredVarSet: HashSet<String> = HashSet()
-    public var defaultValueMap: Map<String, NodeFormat_Expr> = HashMap()
+    public var defaultValueMap: Map<String, Expr> = HashMap()
     
     public init() {
         registerDefaultMap()
@@ -24,7 +21,7 @@ public class GlobalConfig <: DefaultValueExprStore {
         adaptorFactry.registrer("Bool", BoolAdaptor(this))
         adaptorFactry.registrer("Int64", IntAdaptor(this))
         adaptorFactry.registrer("Float64", FloatAdaptor(this))
-        adaptorFactry.registrer("Time", TimeAdaptor(this))
+        adaptorFactry.registrer("DateTime", TimeAdaptor(this))
         adaptorFactry.registrer("ArrayList", ArrayListAdaptor(this, adaptorFactry))
         adaptorFactry.registrer("HashSet", HashSetAdaptor(this, adaptorFactry))
     }

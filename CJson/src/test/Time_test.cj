@@ -1,13 +1,15 @@
-package test
+package CJson.test
 
-from std import time.Time
+import std.time.DateTime
 
-import serialization.adaptor.*
+internal import CJson.serialization.adaptor.*
+import CJson.jsonmacro.*
+import CJson.serialization.IJsonSerializable
 
 @JsonSerializable
 class ClassWithTime {
     public var intVar: Int64 = 10
-    public var time: Time = Time.now()
+    public var time: DateTime = DateTime.now()
 }
 
 @Test

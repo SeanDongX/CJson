@@ -1,6 +1,6 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
 
 public interface DefaultValueExprStore {
     func hasValueExpr(varIdentifierName: String): Bool
-    func getValueExpr(varIdentifierName: String): NodeFormat_Expr
+    func getValueExpr(varIdentifierName: String): Expr
 }

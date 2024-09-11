@@ -1,10 +1,11 @@
-macro package jsonmacro
+macro package CJson.jsonmacro
 
-from std import collection.*
+internal import std.collection.*
+internal import std.ast.*
 
-import serialization.*
-import serialization.adaptor.*
-import serialization.common.*
+internal import CJson.serialization.*
+internal import CJson.serialization.adaptor.*
+internal import CJson.serialization.common.*
 
 /*
 * Macro for inserting json serialization/deserialization func onto target class
@@ -18,19 +19,18 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
 
     match(declPair) {
         case (Some(vc), None) =>
-            classAndStructInfo.classModifier = vc.getModifiers()
-            classAndStructInfo.classKeyWord = vc.getKeyword()
-            classAndStructInfo.classIdent = vc.getIdentifier()
-            classAndStructInfo.classBody = vc.getBody()
-            classAndStructInfo.superTypes = vc.getSuperTypes()
+            classAndStructInfo.classModifier = vc.modifiers
+            classAndStructInfo.classKeyWord = vc.keyword
+            classAndStructInfo.classIdent = vc.identifier
+            classAndStructInfo.classBody = vc.body.decls
+            classAndStructInfo.superTypes = vc.superTypes
             classAndStructInfo.varDeclList = checkVars(vc, globalConfig)
-
         case (None, Some(vs)) => 
-            classAndStructInfo.classModifier = vs.getModifiers()
-            classAndStructInfo.classKeyWord = vs.getKeyword()
-            classAndStructInfo.classIdent = vs.getIdentifier()
-            classAndStructInfo.classBody = vs.getBody()
-            classAndStructInfo.superTypes = vs.getSuperTypes()
+            classAndStructInfo.classModifier = vs.modifiers
+            classAndStructInfo.classKeyWord = vs.keyword
+            classAndStructInfo.classIdent = vs.identifier
+            classAndStructInfo.classBody = vs.body.decls
+            classAndStructInfo.superTypes = vs.superTypes
             classAndStructInfo.varDeclList = checkVars(vs, globalConfig)
 
         case _ => ()
@@ -44,9 +44,9 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
 }
 
 
-func checkVars(classDecl_Tk: FlatBufferObject, globalConfig: GlobalConfig): ArrayList<NodeFormat_VarDecl> {
+func checkVars(classDecl_Tk: Node, globalConfig: GlobalConfig): ArrayList<VarDecl> {
     let varVisitor = ClassVarDeclVisitor(globalConfig)
-    Walker.walk(classDecl_Tk, varVisitor)
+    classDecl_Tk.traverse(varVisitor)
     globalConfig.defaultValueMap = varVisitor.getDefaultVarValueMap()
     return varVisitor.getVarTokenList()
 }

@@ -1,6 +1,6 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
 
-import serialization.common.*
+internal import CJson.serialization.common.*
 
 /*
 * Core implementation of JsonAdaptor for collections
@@ -19,14 +19,14 @@ public abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
     * @param genericVar_Tk the generic var token to be inserted
     * @return token representation
     */
-    func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens
+    protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens
 
     protected func getContainerIdentifier(): String {
         return thisType.getOrThrow().getTypeName()
     }
 
-    protected func getGenericType(): NodeFormat_Type {
-        return thisType.getOrThrow().asRefType().getArgs()[0]
+    protected func getGenericType(): TypeNode {
+        return (thisType.getOrThrow() as RefType).getOrThrow().typeArguments[0]
     }
     
     protected func getGenericTypeName(): String {

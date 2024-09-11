@@ -1,4 +1,4 @@
-macro package jsonmacro
+macro package CJson.jsonmacro
 
 let globalConfig = GlobalConfig()
 

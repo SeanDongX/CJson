@@ -1,4 +1,4 @@
-package serialization.common
+package CJson.serialization.common
 
 public class AdaptorMissingException <: Exception {
     public init(message: String) {

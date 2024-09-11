@@ -32,20 +32,20 @@ from CJson import jsonmacro.*
 public class ExampleOne {
     //3. class properties must be declared with explicit type
     var name: String = "Chrsitmas"
-    var time: Time = Time.now()
+    var time: DateTime = DateTime.now()
 }
 
 @JsonSerializable
 public class ExampleOne_Init {
     var name: String
-    var time: Time
+    var time: DateTime
 
     //4. the target class must have a parameter-less contructor
     //try comment out this init method to see compile errors
     //ExampleOne class will work since there it has an equavalent "hidden" parameter-less contructor
     public init() {
         this.name = "Chrsitmas_init"
-        this.time = Time.parse("2022-12-25T00:00:00+01:00")
+        this.time = DateTime.parse("2022-12-25T00:00:00+01:00")
     }
 
     public init(name: String) {

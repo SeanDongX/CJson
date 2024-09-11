@@ -1,6 +1,6 @@
-package serialization
+package CJson.serialization
 
-from encoding import json.JsonObject
+internal import encoding.json.JsonObject
 
 public interface IJsonSerializable<T> {
     static func fromJson(json: String) : T

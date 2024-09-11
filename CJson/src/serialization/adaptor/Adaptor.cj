@@ -1,7 +1,10 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
+
+internal import std.ast.*
+internal import std.collection.*
 
 public open class Adaptor {
-    protected var thisType: Option<NodeFormat_Type> = None
+    protected var thisType: Option<TypeNode> = None
     protected var defalutValueExprStore: DefaultValueExprStore
 
     public init(defalutValueExprStore: DefaultValueExprStore) {
@@ -9,11 +12,11 @@ public open class Adaptor {
     }
 
     
-    public func setType(thisType: NodeFormat_Type) {
+    public func setType(thisType: TypeNode) {
        this.thisType = thisType
     }
 
-    public func getType(): NodeFormat_Type {
+    public func getType(): TypeNode {
         return thisType.getOrThrow()
     }
 

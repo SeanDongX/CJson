@@ -1,5 +1,6 @@
-package serialization
+package CJson.serialization
 
+internal import CJson.serialization.common.*
 /*
 * Serializer of json for target class
 */
@@ -16,7 +17,7 @@ public class ClassJsonDeserilizer <: ClassProcessor {
     * @param var_Tk_List the list for memeber var token of the target class
     * @return Tokens the fromJson() func of target class represented in tokens
     */  
-    public func makeFromJsonFunc(classIdentity_Tk: Token, var_Tk_List: ArrayList<NodeFormat_VarDecl>): Tokens {
+    public func makeFromJsonFunc(classIdentity_Tk: Token, var_Tk_List: ArrayList<VarDecl>): Tokens {
         
         var jsonOjbectToken = Token(TokenKind.IDENTIFIER, "jsonObject")
 
@@ -33,7 +34,7 @@ public class ClassJsonDeserilizer <: ClassProcessor {
         )
     }
 
-    private func parseJsonFields(filedInfoList: ArrayList<NodeFormat_VarDecl>, jsonOjbect_Tk: Token): Tokens {
+    private func parseJsonFields(filedInfoList: ArrayList<VarDecl>, jsonOjbect_Tk: Token): Tokens {
         var fieldParseToken = Tokens()
         
         for(fieldInfo in filedInfoList) {
@@ -43,7 +44,7 @@ public class ClassJsonDeserilizer <: ClassProcessor {
         return fieldParseToken
     }
 
-    private func parseJsonFiled(var_Tk: NodeFormat_VarDecl, jsonOjbectVar_Tk: Token): Tokens {
+    private func parseJsonFiled(var_Tk: VarDecl, jsonOjbectVar_Tk: Token): Tokens {
         //TODO: get type from getType() or init Func()
         let (identifier, name, typeName) = getVarInfo(var_Tk)
         var mappedNameValue = getMappedName(name)
@@ -52,7 +53,7 @@ public class ClassJsonDeserilizer <: ClassProcessor {
         var valueReveiverTK = quote(ret.$identifier)
         try {            
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
-            adaptor.setType(var_Tk.getType().getOrThrow())
+            adaptor.setType(var_Tk.declType)
     
             return adaptor.fromJsonValue(valueReveiverTK, nodeJson_Tk, name)
         } catch(exp: AdaptorMissingException) {
@@ -64,8 +65,5 @@ public class ClassJsonDeserilizer <: ClassProcessor {
 
             //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }
-
-        return Tokens()
-
     }
 }

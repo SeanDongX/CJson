@@ -1,4 +1,4 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
 
 public class BoolAdaptor <: Adaptor & JsonAdaptor {
     public init(defalutValueExprStore: DefaultValueExprStore) {

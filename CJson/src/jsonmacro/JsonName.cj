@@ -1,4 +1,4 @@
-macro package jsonmacro
+macro package CJson.jsonmacro
 
 
 /*
@@ -10,7 +10,7 @@ macro package jsonmacro
 public macro JsonName(attr_Tk: Tokens, input_Tk: Tokens): Tokens {
     var decl = TokenVerifier.verifyVarDecl(input_Tk, Const.JSON_NAME_MARCO_NAME)
     
-    globalConfig.userDefinedVarMap.put(decl.getIdentifier().value, checkVarNameAttr(attr_Tk))
+    globalConfig.userDefinedVarMap.put(decl.identifier.value, checkVarNameAttr(attr_Tk))
     
     return input_Tk
 }

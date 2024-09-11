@@ -1,7 +1,4 @@
-macro package jsonmacro
-
-from std import ast.*
-from encoding import json.*
+macro package CJson.jsonmacro
 
 /*
 * Macro for ignore the decorated var when doing json serialization/deserialization
@@ -11,7 +8,7 @@ from encoding import json.*
 public macro JsonIgnore(input_Tk: Tokens): Tokens {
     var decl = TokenVerifier.verifyVarDecl(input_Tk, Const.JSON_IGNORE_MARCO_NAME)
     
-    globalConfig.ignoredVarSet.put(decl.getIdentifier().value)
+    globalConfig.ignoredVarSet.put(decl.identifier.value)
 
     return input_Tk
 }

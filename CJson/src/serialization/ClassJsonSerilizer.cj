@@ -1,6 +1,4 @@
-package serialization
-
-import serialization.common.*
+package CJson.serialization
 
 public class ClassJsonSerilizer <: ClassProcessor {
     
@@ -14,7 +12,7 @@ public class ClassJsonSerilizer <: ClassProcessor {
     * @param var_Tk_List the list for memeber var token of the target class
     * @return Tokens the toJsonObject() and toJson() func of target class represented in tokens
     */
-    public func makeToJsonFunc(var_Tk_List: ArrayList<NodeFormat_VarDecl>): Tokens {
+    public func makeToJsonFunc(var_Tk_List: ArrayList<VarDecl>): Tokens {
         
         return quote(
             public func toJsonObject(): JsonObject {
@@ -31,7 +29,7 @@ public class ClassJsonSerilizer <: ClassProcessor {
         )
     }
 
-    private func composeMap(var_Tk_List: ArrayList<NodeFormat_VarDecl>): Tokens {
+    private func composeMap(var_Tk_List: ArrayList<VarDecl>): Tokens {
         var fieldMapToken = Tokens()
         
         for(var_Tk in var_Tk_List) {
@@ -41,13 +39,13 @@ public class ClassJsonSerilizer <: ClassProcessor {
         return fieldMapToken
     }
 
-    private func addFieldToMap(var_Tk: NodeFormat_VarDecl): Tokens {
+    private func addFieldToMap(var_Tk: VarDecl): Tokens {
         let (identifier, name, typeName) = getVarInfo(var_Tk)        
         var mappedNameValue = getMappedName(name)
 
         try {
             var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
-            adaptor.setType(var_Tk.getType().getOrThrow())
+            adaptor.setType(var_Tk.declType)
         
             var jsonValueFuncName_Tk = Tokens([Token(TokenKind.IDENTIFIER, "getValue_" + identifier.value)])
             var jsonValueFunc_Tk = adaptor.toJsonValueFunc(quote(this.$identifier), jsonValueFuncName_Tk, identifier.value)
@@ -63,7 +61,7 @@ public class ClassJsonSerilizer <: ClassProcessor {
             return quote(                    
                 map.put($mappedNameValue, this.$identifier.toJsonObject())
             )
-            throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
+            //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }
     }
 }

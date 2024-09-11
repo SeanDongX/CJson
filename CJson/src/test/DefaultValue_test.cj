@@ -1,5 +1,7 @@
-package test
+package CJson.test
 
+import CJson.serialization.IJsonSerializable
+import CJson.jsonmacro.*
 
 @JsonSerializable
 class DefaultValueClass {
@@ -13,7 +15,7 @@ class DefaultValueClass {
 @Test
 public class TestDefaultValue {
     private let DEFAULT_VALUE_JSON = "{\"p0\":0}"
-    private let DEFAULT_TOJSON = "{\"p0\":0,\"p1\":\"v1\",\"p2\":99,\"p3\":false,\"p4\":10.990000}"
+    private let DEFAULT_TOJSON = "{\"p0\":0,\"p1\":\"v1\",\"p2\":99,\"p3\":false,\"p4\":10.99}"
     
     @TestCase
     func testFromJson(): Unit {

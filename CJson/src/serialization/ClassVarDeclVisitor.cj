@@ -1,13 +1,11 @@
-package serialization
-
-from std import ast.*
+package CJson.serialization
 
 /*
 *  The visitor for class-level vars for target class
 */
 public class ClassVarDeclVisitor <: Visitor {
-    private var var_Tk_List: ArrayList<NodeFormat_VarDecl> = ArrayList()
-    private var defaultVarValueMap: Map<String, NodeFormat_Expr> = HashMap()
+    private var var_Tk_List: ArrayList<VarDecl> = ArrayList()
+    private var defaultVarValueMap: Map<String, Expr> = HashMap()
 
     private var globalConfig: GlobalConfig
 
@@ -20,7 +18,7 @@ public class ClassVarDeclVisitor <: Visitor {
     *
     * @return the list of tokens with var
     */
-    public func getVarTokenList(): ArrayList<NodeFormat_VarDecl> {
+    public func getVarTokenList(): ArrayList<VarDecl> {
         return var_Tk_List
     }
 
@@ -29,17 +27,18 @@ public class ClassVarDeclVisitor <: Visitor {
     *
     * @return the map of default values with <VarName, DefaultVarValue>
     */
-    public func getDefaultVarValueMap(): Map<String, NodeFormat_Expr> {
+    public func getDefaultVarValueMap(): Map<String, Expr> {
         return defaultVarValueMap
     }
 
     /*
     * Set the default value of the var
     */
-    private func setDefaultValue(varDecl_Tk: NodeFormat_VarDecl): Unit { 
-        match(varDecl_Tk.getInitializer()) {
-            case Some(v) => let _ = defaultVarValueMap.put(varDecl_Tk.getIdentifier().value, (v as NodeFormat_Expr).getOrThrow())
-            case None => ()
+    private func setDefaultValue(varDecl_Tk: VarDecl): Unit { 
+        try {
+            defaultVarValueMap.put(varDecl_Tk.identifier.value, varDecl_Tk.expr)
+        } catch (_: ASTException) {
+            ()
         }
     }
 
@@ -48,21 +47,14 @@ public class ClassVarDeclVisitor <: Visitor {
     *
     * @return true if wants to continue visisting
     */
-    override public func visit(decl: Decl): Bool {
-        if (decl.isFuncDecl()) {
-            //stop processing func so it won't include var declaration inside funcs
-            return false
+    override public func visit(varDecl: VarDecl) {
+        if (!globalConfig.ignoredVarSet.contains(varDecl.identifier.value)) {
+            setDefaultValue(varDecl)
+            var_Tk_List.append(varDecl)
         }
+    }
 
-        if (decl.isVarDecl()) {
-            var varDecl = decl.asVarDecl()
-            if (!globalConfig.ignoredVarSet.contains(varDecl.getIdentifier().value)) {
-                setDefaultValue(varDecl)
-                var_Tk_List.append(varDecl)
-            }
-            
-        }
-        
-        return true
+    override public func visit(funcDecl: FuncDecl) {
+        breakTraverse()
     }
 }

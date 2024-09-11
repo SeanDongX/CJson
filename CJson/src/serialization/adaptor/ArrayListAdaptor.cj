@@ -1,4 +1,4 @@
-package serialization.adaptor
+package CJson.serialization.adaptor
 
 public class ArrayListAdaptor <: JsonCollectionAdaptorImpl {
     public init(defalutValueExprStore: DefaultValueExprStore, adaptorFactory: JsonAdaptorFactory) {

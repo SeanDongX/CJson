@@ -1,0 +1,15 @@
+[dependencies]
+
+[package]
+  cjc-version = "0.55.3"
+  name = "CJson"
+  version = "1.0.0"
+  output-type = "dynamic"
+
+  compile-option = ""
+  description = "nothing here"
+  link-option = ""
+  src-dir = ""
+  target-dir = ""
+
+  [package.package-configuration]
