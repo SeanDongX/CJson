@@ -73,11 +73,18 @@ public struct ExampleOneStruct {
 编译：
 ```shell
 cd CJson
-cpm build
+cjpm build
 ```
 
 单元测试：
 ```shell
 cd CJson
-cpm test
+cjpm test
+```
+
+运行demo：
+```shell
+cd Example
+cjpm run
+单元测试：
 ```
