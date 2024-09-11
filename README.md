@@ -19,13 +19,39 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 - 使用@JsonName["alias"]定制属性的序列化键值
 - 使用JsonIgnore标记需要被忽略的属性
 
-详见 Example/src的样例和CJson/src/test目录下的测试用例
 
+### 编译执行
+编译：
+```shell
+cd CJson
+cjpm build
 ```
+
+单元测试：
+```shell
+cd CJson
+cjpm test
+```
+
+运行demo：
+```shell
+cd Example
+cjpm run
+单元测试：
+```
+
+## 详见 Example/src的样例和CJson/src/test目录下的测试用例
+
+```swift
+package cjsonExample
+
+internal import std.time.DateTime
+
 //1. the following three packages must be imported by decoraetd class/struct, or by it's belonging package
-from std import collection.HashMap
-from encoding import json.*
-from CJson import jsonmacro.*
+internal import std.collection.HashMap
+internal import encoding.json.*
+import CJson.jsonmacro.*
+import CJson.serialization.IJsonSerializable
 
 //2. use @JsonSerializable to decorate target class
 @JsonSerializable
@@ -50,7 +76,7 @@ public class ExampleOne_Init {
 
     public init(name: String) {
         this.name = name
-        this.time = Time.parse("2022-12-25T00:00:00+01:00")
+        this.time = DateTime.parse("2022-12-25T00:00:00+01:00")
     }
 }
 
@@ -59,32 +85,10 @@ public class ExampleOne_Init {
 @JsonSerializable
 public struct ExampleOneStruct {
     var name: String = "Labor Day"
-    var time: Time
+    var time: DateTime
 
     public init () {
-        this.time = Time.now()
+        this.time = DateTime.now()
     }
 }
-
-```
-
-### 编译执行
-
-编译：
-```shell
-cd CJson
-cjpm build
-```
-
-单元测试：
-```shell
-cd CJson
-cjpm test
-```
-
-运行demo：
-```shell
-cd Example
-cjpm run
-单元测试：
 ```
