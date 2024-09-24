@@ -4,7 +4,7 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 
 ### 特性
 
-- 🚀 只需使用@JsonSerializable宏标记类名，几个使其具备序列化/反序列化能力
+- 🚀 只需使用@JsonSerializable宏标记类名，使其具备序列化/反序列化能力
 
 - 🛠️ 支持使用@JsonName(xxxx)标记类成员，定制序列化属性名为xxx
 
