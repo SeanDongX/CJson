@@ -19,7 +19,6 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 - 使用@JsonName["alias"]定制属性的序列化键值
 - 使用JsonIgnore标记需要被忽略的属性
 
-
 ### 编译执行
 编译：
 ```shell
@@ -38,6 +37,15 @@ cjpm test
 cd Example
 cjpm run
 单元测试：
+```
+
+### 如何使用
+
+在您代码仓的 cjpm.toml 文件中，需要新增加如下源码依赖：
+
+```shell
+[dependencies]
+  CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git" branch = "master"}
 ```
 
 ## 详见 Example/src的样例和CJson/src/test目录下的测试用例
