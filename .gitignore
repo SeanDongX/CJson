@@ -16,6 +16,7 @@ debug_*.cj
 cpm_build_args.json
 settings.json
 log.*.txt
+**/cjpm.lock
 
 .vscode/settings.json
 module-resolve.json
