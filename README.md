@@ -43,11 +43,18 @@ cjpm run
 
 在您代码仓的 cjpm.toml 文件中，需要新增加如下源码依赖：
 
+ **鸿蒙应用开发场景：**
+ ```shell
+[dependencies]
+  CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git", branch = "ohos-5.0"}
+```
+  
+ **其他应用开发场景：**
 ```shell
 [dependencies]
   CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git" branch = "master"}
 ```
-
+  
 ## 详见 Example/src的样例和CJson/src/test目录下的测试用例
 
 ```swift
