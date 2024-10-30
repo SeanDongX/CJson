@@ -12,6 +12,8 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 
 - ⛳ 支持使用默认值，克服json中的缺失值
 
+- ⛳ 支持Option<T> type
+
 - 🛠️ 支持定制类的序列化和反序列化，通过直接实现或使用扩展实现IJsonSerializable<T>
 
 ### 接口说明
