@@ -22,6 +22,7 @@ public class GlobalConfig <: DefaultValueExprStore {
         adaptorFactry.registrer("Int64", IntAdaptor(this))
         adaptorFactry.registrer("Float64", FloatAdaptor(this))
         adaptorFactry.registrer("DateTime", TimeAdaptor(this))
+        adaptorFactry.registrer("Option", OptionAdaptor(this, adaptorFactry))
         adaptorFactry.registrer("ArrayList", ArrayListAdaptor(this, adaptorFactry))
         adaptorFactry.registrer("HashSet", HashSetAdaptor(this, adaptorFactry))
     }

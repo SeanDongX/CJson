@@ -5,12 +5,9 @@ internal import CJson.serialization.common.*
 /*
 * Core implementation of JsonAdaptor for collections
 */
-public abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
-    private var adaptorFactory: JsonAdaptorFactory
-    
+public abstract class JsonCollectionAdaptorImpl <: GenericAdaptor {
     public init(defalutValueExprStore: DefaultValueExprStore, adaptorFactory: JsonAdaptorFactory) {
-        super(defalutValueExprStore)
-        this.adaptorFactory = adaptorFactory
+        super(defalutValueExprStore, adaptorFactory)
     }
 
     /*
@@ -20,22 +17,6 @@ public abstract class JsonCollectionAdaptorImpl <: Adaptor & JsonAdaptor {
     * @return token representation
     */
     protected func insertValueExpr(valueReceiver_Tk: Tokens, genericVar_Tk: Tokens): Tokens
-
-    protected func getContainerIdentifier(): String {
-        return thisType.getOrThrow().getTypeName()
-    }
-
-    protected func getGenericType(): TypeNode {
-        return (thisType.getOrThrow() as RefType).getOrThrow().typeArguments[0]
-    }
-    
-    protected func getGenericTypeName(): String {
-        return getGenericType().getTypeName()
-    }
-
-    public func getGenericTypeAdaptor(): JsonAdaptor {
-        return adaptorFactory.getAdaptor(getGenericTypeName())
-    }
 
     public func fromJsonValue(valueReceiver_Tk: Tokens, jsonVar_Tk: Tokens, varIdentifierName: String): Tokens {
         var containType_Tk = getType()

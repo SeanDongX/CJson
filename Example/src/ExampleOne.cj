@@ -17,6 +17,13 @@ public class ExampleOne {
 }
 
 @JsonSerializable
+public class ExampleOneOptional {
+    var One: Option<ExampleOne> = ExampleOne()
+    var Two: Option<String> = None
+    var Three: Option<Int64> = None
+}
+
+@JsonSerializable
 public class ExampleOne_Init {
     var name: String
     var time: DateTime
@@ -35,6 +42,14 @@ public class ExampleOne_Init {
     }
 }
 
+@JsonSerializable
+class ClassWithOption {   
+    public var optionalStringWithoutValue: Option<String> = None
+    public var optionalStringWithValue: Option<String> = "StringValue"
+
+    public var optionalIntWithoutValue: Option<Int64> = None
+    public var optionalIntWithValue: Option<Int64> = 199
+}
 
 //struct is also supported
 @JsonSerializable

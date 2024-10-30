@@ -46,7 +46,7 @@ public class ClassJsonDeserilizer <: ClassProcessor {
 
     private func parseJsonFiled(var_Tk: VarDecl, jsonOjbectVar_Tk: Token): Tokens {
         //TODO: get type from getType() or init Func()
-        let (identifier, name, typeName) = getVarInfo(var_Tk)
+        let (identifier, name, typeName, tyepArguments) = getVarInfo(var_Tk)
         var mappedNameValue = getMappedName(name)
         
         var nodeJson_Tk = quote($jsonOjbectVar_Tk.get($mappedNameValue).getOrThrow())
@@ -59,9 +59,25 @@ public class ClassJsonDeserilizer <: ClassProcessor {
         } catch(exp: AdaptorMissingException) {
             //TODO: check if class is marked with JsonSerializable
             var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
-            return quote(                    
-                $valueReveiverTK = $classNameToken.fromJson($nodeJson_Tk.toString())
-            )
+            if (typeName.toTokens().toString().contains("Option")) {
+                if (tyepArguments.size > 0) {
+                    let optionType = Token(TokenKind.IDENTIFIER,tyepArguments[0].getTypeName())
+                    return quote(
+                        try {
+                            $valueReveiverTK = $optionType.fromJson($nodeJson_Tk.toString())
+                        } catch(exp: Exception) {
+                            $valueReveiverTK = Option<$optionType>.None
+                        }     
+                    ) 
+                } 
+                
+                throw Exception("Option generic type not provided")
+                
+            } else {
+                return quote(                    
+                    $valueReveiverTK = $classNameToken.fromJson($nodeJson_Tk.toString())
+                )
+            }
 
             //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }

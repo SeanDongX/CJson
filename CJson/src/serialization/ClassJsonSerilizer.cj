@@ -40,7 +40,7 @@ public class ClassJsonSerilizer <: ClassProcessor {
     }
 
     private func addFieldToMap(var_Tk: VarDecl): Tokens {
-        let (identifier, name, typeName) = getVarInfo(var_Tk)        
+        let (identifier, name, typeName, tyepArguments) = getVarInfo(var_Tk)
         var mappedNameValue = getMappedName(name)
 
         try {
@@ -58,9 +58,19 @@ public class ClassJsonSerilizer <: ClassProcessor {
             )
 
         } catch(exp: AdaptorMissingException) {
-            return quote(                    
-                map.put($mappedNameValue, this.$identifier.toJsonObject())
-            )
+            if (typeName.toTokens().toString().contains("Option")) {
+                return quote(
+                    if (let Some(v) <- this.$identifier) {
+                        map.put($mappedNameValue, v.toJsonObject())
+                    } else {
+                        map.put($mappedNameValue, JsonNull())
+                    }
+                )
+            } else {
+                return quote(                    
+                    map.put($mappedNameValue, this.$identifier.toJsonObject())
+                )
+            }
             //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
         }
     }
