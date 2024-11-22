@@ -6,11 +6,12 @@ import CJson.serialization.adaptor.*
 */
 public class GlobalConfig <: DefaultValueExprStore {
     public let adaptorFactry = JsonAdaptorFactory()
-    
+    public var propAdaptorFactry = JsonPropAdaptorFactory()
+
     public let userDefinedVarMap : HashMap<String, String> = HashMap()
     public let ignoredVarSet: HashSet<String> = HashSet()
     public var defaultValueMap: Map<String, Expr> = HashMap()
-    
+
     public init() {
         registerDefaultMap()
     }
@@ -33,6 +34,7 @@ public class GlobalConfig <: DefaultValueExprStore {
     public func reset() {
         this.userDefinedVarMap.clear()
         this.ignoredVarSet.clear()
+        this.propAdaptorFactry = JsonPropAdaptorFactory()
     }
 
     public func hasValueExpr(varIdentifierName: String) {

@@ -16,10 +16,13 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 
 - 🛠️ 支持定制类的序列化和反序列化，通过直接实现或使用扩展实现IJsonSerializable<T>
 
+- ⛳ 支持使用@JsonCust定制成员变量的序列化反序列化
+
 ### 接口说明
 - 使用@JsonSerializable标记被序列化/反序列化对象
 - 使用@JsonName["alias"]定制属性的序列化键值
-- 使用JsonIgnore标记需要被忽略的属性
+- 使用@JsonIgnore标记需要被忽略的属性
+- 使用@JsonCust[ClassName]定制属性的序列换反序列化过程(ClassName <:CustJsonSerializable<T>)
 
 ### 编译执行
 编译：

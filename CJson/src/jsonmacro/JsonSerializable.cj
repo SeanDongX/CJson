@@ -12,7 +12,7 @@ internal import CJson.serialization.common.*
 * @param input_Tk the target class token
 * @return token the expaned token representation
 */
-public macro JsonSerializable(input_Tk: Tokens): Tokens {    
+public macro JsonSerializable(input_Tk: Tokens): Tokens {
     let declPair = TokenVerifier.verifyClassDecl(input_Tk, Const.JSON_SERIALIZABLE_MACRO_NAME)
 
     var classAndStructInfo = ClassAndStructInfo()
@@ -34,6 +34,15 @@ public macro JsonSerializable(input_Tk: Tokens): Tokens {
             classAndStructInfo.varDeclList = checkVars(vs, globalConfig)
 
         case _ => ()
+    }
+
+    var messages = getChildMessages(Const.JSON_CUST_MARCO_NAME)
+    for (msg in messages) {
+        let propName = msg.getString(Const.KEY_PROP)
+        let serializer = msg.getString(Const.KEY_SERIALIZER)
+        if ( propName != "" && serializer != "") {
+            globalConfig.propAdaptorFactry.registrer(propName, serializer)
+        }
     }
 
     try {

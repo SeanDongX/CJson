@@ -51,35 +51,46 @@ public class ClassJsonDeserilizer <: ClassProcessor {
         
         var nodeJson_Tk = quote($jsonOjbectVar_Tk.get($mappedNameValue).getOrThrow())
         var valueReveiverTK = quote(ret.$identifier)
-        try {            
-            var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
-            adaptor.setType(var_Tk.declType)
-    
-            return adaptor.fromJsonValue(valueReveiverTK, nodeJson_Tk, name)
-        } catch(exp: AdaptorMissingException) {
-            //TODO: check if class is marked with JsonSerializable
-            var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
-            if (typeName.toTokens().toString().contains("Option")) {
-                if (tyepArguments.size > 0) {
-                    let optionType = Token(TokenKind.IDENTIFIER,tyepArguments[0].getTypeName())
-                    return quote(
-                        try {
-                            $valueReveiverTK = $optionType.fromJson($nodeJson_Tk.toString())
-                        } catch(exp: Exception) {
-                            $valueReveiverTK = Option<$optionType>.None
-                        }     
-                    ) 
-                } 
-                
-                throw Exception("Option generic type not provided")
-                
-            } else {
-                return quote(                    
-                    $valueReveiverTK = $classNameToken.fromJson($nodeJson_Tk.toString())
-                )
-            }
 
-            //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
+        var identString = identifier.toTokens().toString()
+        if (globalConfig.propAdaptorFactry.hasAdaptor(identString)) {
+            let serializer_Tk = Token(TokenKind.IDENTIFIER, globalConfig.propAdaptorFactry.getAdaptor(identString))
+            
+            return quote(
+                $valueReveiverTK = $serializer_Tk.fromJson($nodeJson_Tk.toString())
+            )
+        } else {
+    
+            try {            
+                var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
+                adaptor.setType(var_Tk.declType)
+
+                return adaptor.fromJsonValue(valueReveiverTK, nodeJson_Tk, name)
+            } catch(exp: AdaptorMissingException) {
+                //TODO: check if class is marked with JsonSerializable
+                var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
+                if (typeName.toTokens().toString().contains("Option")) {
+                    if (tyepArguments.size > 0) {
+                        let optionType = Token(TokenKind.IDENTIFIER,tyepArguments[0].getTypeName())
+                        return quote(
+                            try {
+                                $valueReveiverTK = $optionType.fromJson($nodeJson_Tk.toString())
+                            } catch(exp: Exception) {
+                                $valueReveiverTK = Option<$optionType>.None
+                            }     
+                        )
+                    } 
+                    
+                    throw Exception("Option generic type not provided")
+                    
+                } else {
+                    return quote(                    
+                        $valueReveiverTK = $classNameToken.fromJson($nodeJson_Tk.toString())
+                    )
+                }
+
+                //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
+            }
         }
     }
 }

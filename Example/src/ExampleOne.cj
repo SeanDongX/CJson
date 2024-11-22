@@ -6,13 +6,27 @@ internal import std.time.DateTime
 internal import std.collection.HashMap
 internal import encoding.json.*
 import CJson.jsonmacro.*
-import CJson.serialization.IJsonSerializable
+import CJson.serialization.*
+
+// custom serializer @JsonCust[CustDateTimeSerializer]
+class CustDateTimeSerializer <: CustJsonSerializable<DateTime> {
+    public static func fromJson(json: String): DateTime {
+        let value = DateTime.parse(json.trimLeft("\"").trimRight("\""))
+        return value.addYears(-1)
+    }
+
+    public static func toJsonValue(value: DateTime): JsonValue {
+        return  JsonString(value.addYears(1).toString())
+    }
+}
 
 //2. use @JsonSerializable to decorate target class
 @JsonSerializable
 public class ExampleOne {
     //3. class properties must be declared with explicit type
-    var name: String = "Chrsitmas"
+    var name: String = "Christmas"
+    
+    @JsonCust[CustDateTimeSerializer]
     var time: DateTime = DateTime.now()
 }
 
@@ -21,6 +35,8 @@ public class ExampleOneOptional {
     var One: Option<ExampleOne> = ExampleOne()
     var Two: Option<String> = None
     var Three: Option<Int64> = None
+    var Four: Option<DateTime> = None
+
 }
 
 @JsonSerializable
@@ -32,7 +48,7 @@ public class ExampleOne_Init {
     //try comment out this init method to see compile errors
     //ExampleOne class will work since there it has an equavalent "hidden" parameter-less contructor
     public init() {
-        this.name = "Chrsitmas_init"
+        this.name = "Christmas_init"
         this.time = DateTime.parse("2022-12-25T00:00:00+01:00")
     }
 
