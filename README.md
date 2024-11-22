@@ -60,7 +60,7 @@ cjpm run
   CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git" branch = "master"}
 ```
   
-## 详见 Example/src的样例和CJson/src/test目录下的测试用例
+## 详见 CJson/src/test目录下的测试用例
 
 ```swift
 package cjsonExample
