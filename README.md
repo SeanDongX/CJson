@@ -18,6 +18,8 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 
 - ⛳ 支持使用@JsonCust定制成员变量的序列化反序列化
 
+- ⛳ 支持自定义Generic T类型，如 ArrayList<MyInstance>, (MyInstance 需要需要手动被标记为@JsonSerializable)
+  
 ### 接口说明
 - 使用@JsonSerializable标记被序列化/反序列化对象
 - 使用@JsonName["alias"]定制属性的序列化键值

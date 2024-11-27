@@ -11,18 +11,25 @@ import CJson.jsonmacro.*
 import CJson.serialization.IJsonSerializable
 
 @JsonSerializable
+class MyInstance {
+    var myName: String = "MyName"
+    var myAge: Int64 = 88
+}
+
+@JsonSerializable
 class ClassWithCollction {
     public var p1: String = "v1"
     public var p2: Int64 = 1
     public var array: ArrayList<String> =  ArrayList<String>()
+    public var instances: ArrayList<MyInstance> = ArrayList<MyInstance>([MyInstance()])
 }
 
 @Test
 class TestCollection {
-    private let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[\"8\",\"7\"]}"
+    private let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[\"8\",\"7\"],\"instances\":[{\"myName\":\"MyName\",\"myAge\":88}]}"
 
     @TestCase
-    func testToJson(): Unit {        
+    func testToJson(): Unit {
         @Assert(ClassWithCollction.fromJson(JSON_WITH_COLLECTION).toJson(), JSON_WITH_COLLECTION)
     }
 }
