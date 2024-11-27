@@ -59,7 +59,7 @@ cjpm run
  **其他应用开发场景：**
 ```shell
 [dependencies]
-  CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git" branch = "master"}
+  CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git", branch = "master"}
 ```
   
 ## 详见 CJson/src/test目录下的测试用例
