@@ -15,16 +15,14 @@ public class ClassJsonSerilizer <: ClassProcessor {
     public func makeToJsonFunc(var_Tk_List: ArrayList<VarDecl>): Tokens {
         
         return quote(
-            public func toJsonObject(): JsonObject {
+            public func toJsonValue(): JsonObject {
                 var map: HashMap<String, JsonValue> = HashMap()
-
                 $(composeMap(var_Tk_List))
-                
                 return JsonObject(map)
             }
 
             public func toJson(): String {
-                toJsonObject().toString()
+                this.toJsonValue().toString()
             }
         )
     }
@@ -33,53 +31,50 @@ public class ClassJsonSerilizer <: ClassProcessor {
         var fieldMapToken = Tokens()
         
         for(var_Tk in var_Tk_List) {
-            fieldMapToken = fieldMapToken + addFieldToMap(var_Tk)   
+            fieldMapToken = fieldMapToken + addFieldToMap(var_Tk)
         }
 
         return fieldMapToken
     }
 
     private func addFieldToMap(var_Tk: VarDecl): Tokens {
-        let (identifier, name, typeName, tyepArguments) = getVarInfo(var_Tk)
-        var mappedNameValue = getMappedName(name)
+        let varInfo = getVarInfo(var_Tk)
+        var mappedNameValue = getMappedName(varInfo.name)
 
-        var identString = identifier.toTokens().toString()
-        if (globalConfig.propAdaptorFactry.hasAdaptor(identString)) {
-            let serializer_Tk = Token(TokenKind.IDENTIFIER, globalConfig.propAdaptorFactry.getAdaptor(identString))
-            return quote(
-                    map.put($mappedNameValue, $serializer_Tk.toJsonValue(this.$identifier))
-            )
+        if (globalConfig.propAdaptorFactry.hasAdaptor(varInfo.identifier.toTokens().toString())) {
+            //1. custom property with @JsonCust[Serializer]
+            addCustProp(mappedNameValue, varInfo)
+
+        } else if (varInfo.typeName.toTokens().toString().contains("Option")) {
+            //2. Option<T> property
+            addOptionPorp(mappedNameValue, varInfo)
         } else {
-            try {
-                var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
-                adaptor.setType(var_Tk.declType)
-            
-                var jsonValueFuncName_Tk = Tokens([Token(TokenKind.IDENTIFIER, "getValue_" + identifier.value)])
-                var jsonValueFunc_Tk = adaptor.toJsonValueFunc(quote(this.$identifier), jsonValueFuncName_Tk, identifier.value)
-                return quote(
-                    //define a func to getValue in place
-                    $jsonValueFunc_Tk
-
-                    //invoke the func
-                    map.put($mappedNameValue, $jsonValueFuncName_Tk())
-                )
-
-            } catch(exp: AdaptorMissingException) {
-                if (typeName.toTokens().toString().contains("Option")) {
-                    return quote(
-                        if (let Some(v) <- this.$identifier) {
-                            map.put($mappedNameValue, v.toJsonObject())
-                        } else {
-                            map.put($mappedNameValue, JsonNull())
-                        }
-                    )
-                } else {
-                    return quote(                    
-                        map.put($mappedNameValue, this.$identifier.toJsonObject())
-                    )
-                }
-                //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
-            }
+            //3. normal property
+            addProp(mappedNameValue, varInfo)
         }
+    }
+
+    private func addCustProp(key: String, varInfo: VarInfo): Tokens {
+        var identString = varInfo.identifier.toTokens().toString()
+        let serializer_Tk = Token(TokenKind.IDENTIFIER, globalConfig.propAdaptorFactry.getAdaptor(identString))
+        return quote(
+            map.put($key, $serializer_Tk(this.$(varInfo.identifier)).toJsonValue())
+        )
+    }
+
+    private func addOptionPorp(key: String, varInfo: VarInfo): Tokens {
+        return quote(
+            if (let Some(v) <- this.$(varInfo.identifier)) {
+                map.put($key, v.toJsonValue())
+            } else {
+                map.put($key, JsonNull())
+            }
+        )
+    }
+
+    private func addProp(key: String, varInfo: VarInfo): Tokens {
+        return quote(
+            map.put($key, this.$(varInfo.identifier).toJsonValue())
+        )
     }
 }

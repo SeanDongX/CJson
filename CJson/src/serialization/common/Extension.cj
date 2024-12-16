@@ -32,9 +32,9 @@ extend VarDecl <: TokenExtesion {
     /*
      * Get info from VarDecl
      *
-     * @return (Token, String, String) the identifier, name, type name of the var
+     * @return VarInfo
      */
-    public func getVarInfo(): (Token, String, String, ArrayList<TypeNode>) {
+    public func getVarInfo(): VarInfo {
         let identifier = identifier
         let name = identifier.value
         var typeName: String
@@ -50,7 +50,19 @@ extend VarDecl <: TokenExtesion {
         } catch (exp: NoneValueException) {
             throw TypeInferrenceException("Field ${name} must be declared with a specific type instead of using a inferred type")
         }
-        //TODO: return generic T if type is generic
-        return (identifier, name, typeName, typeArguments)
+        return VarInfo(identifier, name, typeName, typeArguments)
+    }
+}
+
+extend ArrayList<TypeNode> <: TokenExtesion {
+    public func flattenWithComma(): Tokens {
+        var res_Tks = quote()
+        for (typeNode in this) {
+            res_Tks.append(typeNode)
+            res_Tks.append(Token(COMMA))
+        }
+
+        res_Tks.remove(res_Tks.size - 1)
+        return res_Tks
     }
 }

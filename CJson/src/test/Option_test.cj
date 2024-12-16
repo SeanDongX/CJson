@@ -29,6 +29,7 @@ public class TestOption {
 
     @TestCase
     func testOption(): Unit {
+        var json = JsonValue.fromStr(MYCLASS_JSON_WITH_OPTION).asObject()
         var classWithOption = ClassWithOption()
         @Assert(classWithOption.toJson().contains("StringValue"), true)
         @Assert(classWithOption.toJson().contains("199"), true)
@@ -38,6 +39,5 @@ public class TestOption {
         @Assert(fromJson.optionalInt64WithoutValue, None)
         @Assert(fromJson.optionalStringWithValue, "StringValue")
         @Assert(fromJson.optionalInt64WithValue, 1001)
-
     }
 }

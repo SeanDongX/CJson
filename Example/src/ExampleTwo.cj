@@ -1,7 +1,7 @@
 package cjsonExample
 
 //1. the following package must be imported, when Custom serializer is needed
-import CJson.serialization.IJsonSerializable
+import CJson.serialization.*
 import CJson.jsonmacro.*
 
 @JsonSerializable
@@ -15,21 +15,18 @@ public class CustomTime {
     }
 }
 
-//2. extend and implement IJsonSerializable<T> for custom serializer of type T
-extend CustomTime <: IJsonSerializable<CustomTime> {
-    public static func fromJson(json: String) : CustomTime {
-        var jsonObject = JsonValue.fromStr( json ).asObject() 
-        return CustomTime(DateTime.parse(jsonObject.get("value").getOrThrow().asString().getValue()[5..]))
+//2. extend and implement CustJsonSerializable<T> for custom serializer of type T
+extend CustomTime <: IJsonValueSerializable<CustomTime> {
+    public static func fromJsonValue(json: JsonValue): CustomTime {
+        let custString = json.asObject().get("value").getOrThrow().asString().getValue()
+        let time = DateTime.parse(custString.trimLeft("CUST_"))
+        return CustomTime(time)
     }
 
-    public func toJsonObject(): JsonObject {
+    public func toJsonValue(): JsonValue {
         var map: HashMap < String , JsonValue >= HashMap()
         let s = "CUST_"
         map.put("value", JsonString(String.join(s, this.value.toString()))) 
         return JsonObject(map)
-    }
-
-    public func toJson(): String {
-        return toJsonObject().toString()
     }
 }

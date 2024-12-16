@@ -6,25 +6,31 @@ import std.time.DateTime
 import CJson.jsonmacro.*
 import CJson.serialization.*
 
-class CustInt64Serializer <: CustJsonSerializable<Int64> {
-    public static func fromJson(json: String): Int64 {
-        var value = Int64.tryParse(json) ?? 0
-        return value * 100
+class CustInt64Serializer <: IJsonValueSerializable<Int64> {
+    public CustInt64Serializer(let value: Int64) {
     }
 
-    public static func toJsonValue(value: Int64): JsonValue {
-        return JsonInt(value/100)
+    public static func fromJsonValue(json: JsonValue): Int64 {
+        return json.asInt().getValue() * 100
+    }
+
+    public func toJsonValue(): JsonValue {
+        return JsonInt(this.value/100)
     }
 }
 
-class CustDateTimeSerializer <: CustJsonSerializable<DateTime> {
-    public static func fromJson(json: String): DateTime {
-        let value = DateTime.parse(json.trimLeft("\"").trimRight("\""))
-        return value.addYears(-1)
+class CustDateTimeSerializer <: IJsonValueSerializable<DateTime> {
+    public CustDateTimeSerializer(let value: DateTime) {
+
     }
 
-    public static func toJsonValue(value: DateTime): JsonValue {
-        return  JsonString(value.addYears(1).toString())
+    public static func fromJsonValue(json: JsonValue): DateTime {
+        let time = DateTime.parse(json.asString().getValue().trimLeft("\"").trimRight("\""))
+        return time.addYears(-1)
+    }
+
+    public func toJsonValue(): JsonValue {
+        return  JsonString(this.value.addYears(1).toString())
     }
 }
 

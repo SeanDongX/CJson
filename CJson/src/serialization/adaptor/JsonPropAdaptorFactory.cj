@@ -1,5 +1,8 @@
 package CJson.serialization.adaptor
 
+import std.collection.HashMap
+import CJson.serialization.common.*
+
 /*
 * The factory for json adaptors
 */

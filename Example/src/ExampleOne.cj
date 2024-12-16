@@ -9,14 +9,18 @@ import CJson.jsonmacro.*
 import CJson.serialization.*
 
 // custom serializer @JsonCust[CustDateTimeSerializer]
-class CustDateTimeSerializer <: CustJsonSerializable<DateTime> {
-    public static func fromJson(json: String): DateTime {
-        let value = DateTime.parse(json.trimLeft("\"").trimRight("\""))
-        return value.addYears(-1)
+class CustDateTimeSerializer <: IJsonValueSerializable<DateTime> {
+    public CustDateTimeSerializer(let value: DateTime) {
+
     }
 
-    public static func toJsonValue(value: DateTime): JsonValue {
-        return  JsonString(value.addYears(1).toString())
+    public static func fromJsonValue(json: JsonValue): DateTime {
+        let time = DateTime.parse(json.asString().getValue().trimLeft("\"").trimRight("\""))
+        return time.addYears(-1)
+    }
+
+    public func toJsonValue(): JsonValue {
+        return  JsonString(this.value.addYears(1).toString())
     }
 }
 

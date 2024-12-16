@@ -2,7 +2,7 @@ package CJson.test
 
 import std.ast.*
 
-import CJson.serialization.IJsonSerializable
+import CJson.serialization.*
 import CJson.jsonmacro.*
 import std.time.DateTime
 
@@ -11,22 +11,22 @@ struct CustomTime {
     }
 }
 
-extend CustomTime <: IJsonSerializable<CustomTime> {
+extend CustomTime <: IJsonValueSerializable<CustomTime> {
     public static func fromJson(json: String) : CustomTime {
-        var jsonObject = JsonValue.fromStr( json ).asObject() 
-        return CustomTime(DateTime.parse(jsonObject.get("value").getOrThrow().asString().getValue()[5..]))
+        return CustomTime.fromJsonValue(JsonValue.fromStr(json))
     }
 
-    public func toJsonObject(): JsonObject {
+    public static func fromJsonValue(json: JsonValue) : CustomTime {
+        return CustomTime(DateTime.parse(json.asObject().get("value").getOrThrow().asString().getValue()[5..]))
+    }
+
+    public func toJsonValue(): JsonValue {
         var map: HashMap < String , JsonValue >= HashMap()
         let s = "CUST_"
         map.put("value", JsonString(String.join(s, this.value.toString())))
         return JsonObject(map)
     }
 
-    public func toJson(): String {
-        return toJsonObject().toString()
-    }
 }
 
 @JsonSerializable

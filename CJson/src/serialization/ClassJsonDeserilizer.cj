@@ -20,15 +20,15 @@ public class ClassJsonDeserilizer <: ClassProcessor {
     public func makeFromJsonFunc(classIdentity_Tk: Token, var_Tk_List: ArrayList<VarDecl>): Tokens {
         
         var jsonOjbectToken = Token(TokenKind.IDENTIFIER, "jsonObject")
-
         return quote(
             public static func fromJson(json: String): $classIdentity_Tk {
-                var $jsonOjbectToken = JsonValue.fromStr(json).asObject()
-                
-                var ret = $classIdentity_Tk()
+                return $classIdentity_Tk.fromJsonValue(JsonValue.fromStr(json))
+            }
 
+            public static func fromJsonValue(json: JsonValue): $classIdentity_Tk {
+                var ret = $classIdentity_Tk()
+                var $jsonOjbectToken = json.asObject()
                 $(parseJsonFields(var_Tk_List, jsonOjbectToken))
-                
                 return ret
             }
         )
@@ -38,59 +38,84 @@ public class ClassJsonDeserilizer <: ClassProcessor {
         var fieldParseToken = Tokens()
         
         for(fieldInfo in filedInfoList) {
-            fieldParseToken = fieldParseToken +  parseJsonFiled(fieldInfo, jsonOjbect_Tk)              
+            fieldParseToken = fieldParseToken +  parseJsonFiled(fieldInfo, jsonOjbect_Tk)
         }
 
         return fieldParseToken
     }
 
     private func parseJsonFiled(var_Tk: VarDecl, jsonOjbectVar_Tk: Token): Tokens {
-        //TODO: get type from getType() or init Func()
-        let (identifier, name, typeName, tyepArguments) = getVarInfo(var_Tk)
-        var mappedNameValue = getMappedName(name)
-        
-        var nodeJson_Tk = quote($jsonOjbectVar_Tk.get($mappedNameValue).getOrThrow())
-        var valueReveiverTK = quote(ret.$identifier)
+        let varInfo = getVarInfo(var_Tk)
+        var mappedNameValue = getMappedName(varInfo.name)
+        let getFieldCore_Tk = parseJsonFiledCore(var_Tk, jsonOjbectVar_Tk, varInfo)
 
-        var identString = identifier.toTokens().toString()
-        if (globalConfig.propAdaptorFactry.hasAdaptor(identString)) {
-            let serializer_Tk = Token(TokenKind.IDENTIFIER, globalConfig.propAdaptorFactry.getAdaptor(identString))
-            
-            return quote(
-                $valueReveiverTK = $serializer_Tk.fromJson($nodeJson_Tk.toString())
-            )
-        } else {
-    
-            try {            
-                var adaptor = globalConfig.adaptorFactry.getAdaptor(typeName)
-                adaptor.setType(var_Tk.declType)
-
-                return adaptor.fromJsonValue(valueReveiverTK, nodeJson_Tk, name)
-            } catch(exp: AdaptorMissingException) {
-                //TODO: check if class is marked with JsonSerializable
-                var classNameToken = Token(TokenKind.IDENTIFIER, typeName)
-                if (typeName.toTokens().toString().contains("Option")) {
-                    if (tyepArguments.size > 0) {
-                        let optionType = Token(TokenKind.IDENTIFIER,tyepArguments[0].getTypeName())
-                        return quote(
-                            try {
-                                $valueReveiverTK = $optionType.fromJson($nodeJson_Tk.toString())
-                            } catch(exp: Exception) {
-                                $valueReveiverTK = Option<$optionType>.None
-                            }     
-                        )
-                    } 
-                    
-                    throw Exception("Option generic type not provided")
-                    
-                } else {
-                    return quote(                    
-                        $valueReveiverTK = $classNameToken.fromJson($nodeJson_Tk.toString())
-                    )
-                }
-
-                //throw AdaptorMissingException("Adaptor missing for ${identifier.value} of type ${typeName}")
+        return quote(
+            if($jsonOjbectVar_Tk.getFields().contains($mappedNameValue)) {
+                $getFieldCore_Tk
             }
+        )
+    }
+
+    private func parseJsonFiledCore(var_Tk: VarDecl, jsonOjbectVar_Tk: Token, varInfo: VarInfo): Tokens {
+        var mappedNameValue = getMappedName(varInfo.name)
+        var nodeJson_Tk = quote($jsonOjbectVar_Tk.get($mappedNameValue).getOrThrow())
+        var valueReveiver_Tk = quote(ret.$(varInfo.identifier))
+
+        if (globalConfig.propAdaptorFactry.hasAdaptor(varInfo.identifier.toTokens().toString())) {
+            //1. custom property with @JsonCust[Serializer]
+            return getCustProp(nodeJson_Tk, varInfo)
+        } else if (varInfo.typeName == "Option") {
+            //2. Option<T> property
+            return getOptionPorp(nodeJson_Tk, varInfo)
+        } else if (varInfo.typeArguments.size > 0) {
+            //3. Generic property such as ArrayList, HashSet, HashMap
+            getGenericProp(nodeJson_Tk, varInfo)
+        } else {
+            //4. Primitive property
+            getProp(nodeJson_Tk, varInfo)
         }
+    }
+
+    private func getCustProp(nodeJson_Tk: Tokens, varInfo: VarInfo): Tokens {
+        let serializer_Tk = Token(TokenKind.IDENTIFIER, 
+            globalConfig.propAdaptorFactry.getAdaptor(varInfo.identifier.toTokens().toString()))
+            
+        return quote(
+            ret.$(varInfo.identifier) = $serializer_Tk.fromJsonValue($nodeJson_Tk)
+        )
+    }
+
+    private func getOptionPorp(nodeJson_Tk: Tokens, varInfo: VarInfo): Tokens {
+        if (varInfo.typeArguments.size == 0) {
+            throw Exception("Option generic type not provided")
+        }
+
+        let optionType = varInfo.typeArguments[0]
+        return quote(
+            if ($nodeJson_Tk is JsonNull) {
+                ret.$(varInfo.identifier) = Option<$optionType>.None
+            } else {
+                try {
+                    ret.$(varInfo.identifier) = $optionType.fromJsonValue($nodeJson_Tk)
+                } catch(exp: Exception) {
+                    ret.$(varInfo.identifier) = Option<$optionType>.None
+                }
+            }
+        )
+    }
+
+    private func getGenericProp(nodeJson_Tk: Tokens, varInfo: VarInfo): Tokens {
+        var serializer_Tk = Token(TokenKind.IDENTIFIER, varInfo.typeName)
+        var genericType_Tk = varInfo.typeArguments.flattenWithComma()
+        return quote(
+            ret.$(varInfo.identifier) = $serializer_Tk<$genericType_Tk>.fromJsonValue($nodeJson_Tk)
+        )
+    }
+
+    private func getProp(nodeJson_Tk: Tokens, varInfo: VarInfo): Tokens {
+        var serializer_Tk = Token(TokenKind.IDENTIFIER, varInfo.typeName)
+        return quote(
+            ret.$(varInfo.identifier) = $serializer_Tk.fromJsonValue($nodeJson_Tk)
+        )
     }
 }

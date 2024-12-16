@@ -6,9 +6,11 @@ import std.unittest.testmacro.*
 internal import encoding.json.*
 internal import std.collection.*
 internal import std.io.*
+internal import CJson.serialization.*
 
 import CJson.jsonmacro.*
-import CJson.serialization.IJsonSerializable
+
+import CJson.serialization.*
 
 @JsonSerializable
 class MyInstance {
@@ -22,11 +24,12 @@ class ClassWithCollction {
     public var p2: Int64 = 1
     public var array: ArrayList<String> =  ArrayList<String>()
     public var instances: ArrayList<MyInstance> = ArrayList<MyInstance>([MyInstance()])
+    public var map: HashMap<String, Int64> = HashMap<String, Int64>([("k1",1),("k2",2),("k3",3),("k4",4),("k5",5)])
 }
 
 @Test
 class TestCollection {
-    private let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[\"8\",\"7\"],\"instances\":[{\"myName\":\"MyName\",\"myAge\":88}]}"
+    private let JSON_WITH_COLLECTION = "{\"p1\":\"v1\",\"p2\":299,\"array\":[\"8\",\"7\"],\"instances\":[{\"myName\":\"MyName\",\"myAge\":88}],\"map\":{\"k1\":1,\"k2\":2,\"k3\":3,\"k4\":4,\"k5\":5}}"
 
     @TestCase
     func testToJson(): Unit {
