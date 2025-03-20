@@ -29,35 +29,25 @@ Json 序列化/反序列化工具，自动给被标记的类增加fromJson()和t
 ### 编译执行
 编译：
 ```shell
-cd CJson
 cjpm build
 ```
 
 单元测试：
 ```shell
-cd CJson
 cjpm test
 ```
 
-运行demo：
+运行Demo：
 ```shell
-cd Example
 cjpm run
-单元测试：
 ```
 
-### 如何使用
+### 如何集成
 
 在您代码仓的 cjpm.toml 文件中，需要新增加如下源码依赖：
 
  **鸿蒙应用开发场景：**
  ```shell
-[dependencies]
-  CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git", branch = "ohos-5.0"}
-```
-  
- **其他应用开发场景：**
-```shell
 [dependencies]
   CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git", branch = "master"}
 ```
@@ -73,7 +63,7 @@ internal import std.time.DateTime
 internal import std.collection.HashMap
 internal import encoding.json.*
 import CJson.jsonmacro.*
-import CJson.serialization.IJsonSerializable
+import CJson.IJsonSerializable
 
 //2. use @JsonSerializable to decorate target class
 @JsonSerializable
