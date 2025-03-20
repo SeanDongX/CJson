@@ -2,9 +2,6 @@ macro package CJson.jsonmacro
 
 import std.collection.HashMap
 
-import std.collection.HashMap
-import CJson.serialization.common.*
-
 /*
 * The factory for json adaptors
 */

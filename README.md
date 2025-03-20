@@ -46,7 +46,6 @@ cjpm run
 
 在您代码仓的 cjpm.toml 文件中，需要新增加如下源码依赖：
 
- **鸿蒙应用开发场景：**
  ```shell
 [dependencies]
   CJson = {git = "https://gitcode.com/Cangjie-TPC/CJson.git", branch = "master"}

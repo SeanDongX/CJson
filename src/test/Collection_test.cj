@@ -6,7 +6,6 @@ import std.unittest.testmacro.*
 internal import encoding.json.*
 internal import std.collection.*
 internal import std.io.*
-internal import CJson.serialization.*
 
 import CJson.*
 import CJson.jsonmacro.*
